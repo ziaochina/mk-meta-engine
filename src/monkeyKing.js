@@ -23,6 +23,9 @@ function parseMetaProps(meta, props) {
         else if (t == 'object') {
             ret[key] = metaToComponent(v, props)
         }
+        else if( t == 'function'){
+            ret[key] = v()
+        }
         else {
             ret[key] = v
         }
@@ -40,9 +43,6 @@ function metaToComponent(meta, props) {
     }
     else if( typeof meta == 'object' && meta['_isAMomentObject']){
         return meta
-    }
-    else if(typeof meta == 'function'){
-        return meta()
     }
     else if (typeof meta == 'object') {
 
