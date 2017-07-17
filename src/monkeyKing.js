@@ -41,6 +41,9 @@ function metaToComponent(meta, props) {
     else if( typeof meta == 'object' && meta['_isAMomentObject']){
         return meta
     }
+    else if(typeof meta == 'function'){
+        return meta()
+    }
     else if (typeof meta == 'object') {
 
         if (meta.component) {
