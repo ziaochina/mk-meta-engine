@@ -88,11 +88,11 @@ class action {
 				let ret = f.apply(this, values)
 				if (key == '...' && ret && typeof ret == 'object') {
 					Object.keys(ret).forEach(kk => {
-						meta[kk] = ()=>ret[kk]
+						meta[kk] = () => ret[kk]
 					})
 					delete meta['...']
 				} else {
-					meta[key] = ()=>ret
+					meta[key] = () => ret
 				}
 			}
 			else if (v instanceof Array) {
@@ -221,6 +221,10 @@ class action {
 		const Modal = config.getModal()
 		if (!Modal || args.length == 0 || !Modal[args[0]]) return
 		return Modal[args[0]](...args.slice(1))
+	}
+
+	loadApp = (name, props) => {
+		return <AppLoader {...props} name={name} />
 	}
 
 	gm = this.getMeta
