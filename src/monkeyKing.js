@@ -23,7 +23,7 @@ function parseMetaProps(meta, props) {
         else if (t == 'object') {
             ret[key] = metaToComponent(v, props)
         }
-        else if( t == 'function'){
+        else if (t == 'function') {
             ret[key] = v()
         }
         else {
@@ -41,13 +41,16 @@ function metaToComponent(meta, props) {
     else if (typeof meta == 'object' && meta['$$typeof']) {
         return meta
     }
-    else if( typeof meta == 'object' && meta['_isAMomentObject']){
+    else if (typeof meta == 'object' && meta['_isAMomentObject']) {
         return meta
     }
     else if (typeof meta == 'object') {
 
         if (meta.component) {
             if (meta['_visible'] === false)
+                return null
+
+            if (typeof meta['_visible'] === 'function' && meta['_visible']() === false)
                 return null
 
             if (meta['_power'] && /for[ ]+in/.test(meta['_power'])) {

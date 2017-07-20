@@ -9,9 +9,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "mk-app-loader": "^1.0.6",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "mk-app-loader": "^1.0.0"
+    "react-dom": "^15.5.4"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
