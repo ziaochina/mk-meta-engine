@@ -22,5 +22,5 @@ $ npm start
 
 ## demo网站
 
-- [mk-app-demo](https://github.com/ziaochina/mk-app-demo)
+- [mk-demo](https://github.com/ziaochina/mk-demo)
 
