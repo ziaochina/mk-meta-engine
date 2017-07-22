@@ -1,23 +1,32 @@
-import React from 'react'
-import {
-	config,
-	start,
-	componentFactory
-} from '../src'
+import { config, start, componentFactory } from 'mk-meta-engine'
+import myConfig  from './config'
 
-import _src from './src/index.js'
+import demo from './apps/demo/index.js'
 
-config({
-	apps: {
-		[_src.name]: _src
+const apps = {
+	config: (options) => {
+		Object.keys(options).forEach(key => {
+			const reg = new RegExp(`^${key == '*' ? '.*' : key}$`) 
+			Object.keys(apps).forEach(appName => { 
+				if (appName != 'config') {
+					if (reg.test(appName)) {
+						apps[appName].config(options[key])
+					}
+				}
+			})
+		})
 	},
-	targetDomId:'app',
-	startAppName:'example'
+	[demo.name]:demo,	
+}
+
+
+apps.config({ '*': { apps } })
+config(myConfig({ apps }))
+
+import * as mkComponents from 'mk-component'
+
+Object.keys(mkComponents).forEach(key=>{
+	componentFactory.registerComponent(key, mkComponents[key])
 })
-
-
-Object.keys(_src.components).forEach(key=>{
-	componentFactory.registerAppComponent(_src.name, key, _src.components[key])
-})
-
+	
 start()
