@@ -12,5 +12,15 @@ $ npm init
 $ npm start
 ```
 
-## API
+## 基于当前元数据引擎实现的一些模板app，请点击链接查看
+
+- [mk-app-root](https://github.com/ziaochina/mk-app-root)
+- [mk-app-login](https://github.com/ziaochina/mk-app-login)
+- [mk-app-portal](https://github.com/ziaochina/mk-app-portal)
+- [mk-app-person-list](https://github.com/ziaochina/mk-app-person-list)
+- [mk-app-person-card](https://github.com/ziaochina/mk-app-person-card)
+
+## demo网站
+
+- [mk-app-demo](https://github.com/ziaochina/mk-app-demo)
 
