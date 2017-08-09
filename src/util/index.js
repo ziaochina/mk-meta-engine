@@ -82,7 +82,6 @@ export function parseMeta(meta) {
     }
 
     parseProp(meta, '', '')
-    debugger
     /*
         meta.keySeq().toArray().forEach(p=>{
     
