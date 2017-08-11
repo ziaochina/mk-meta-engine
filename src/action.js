@@ -4,6 +4,7 @@ import * as util from './util'
 import { fromJS } from 'immutable'
 import contextManager from './context'
 import config from './config'
+import * as expr from './util/expression'
 
 class action {
 	constructor(option) {
@@ -34,8 +35,6 @@ class action {
 	}
 
 	parseExpreesion = (v) => {
-		const reg = new RegExp(/\{\{([^{}]+)\}\}/)
-
 		if (!this.cache.expression)
 			this.cache.expression = {}
 
@@ -51,9 +50,7 @@ class action {
 
 		var params = this.cache.expressionParams
 
-		var body = "return " + v
-			.replace(reg, (word, group) => group)
-		//.replace(/\([ ]*\)/g, word=>`({path:_path, rowIndex:_rowIndex, vars: _vars})`)
+		var body = expr.getExpressionBody(v)
 
 		this.cache.expression[v] = new Function(...params, body)
 
@@ -61,8 +58,6 @@ class action {
 	}
 
 	updateMeta = (meta, path, rowIndex, vars, data) => {
-		const reg = new RegExp(/\{\{([^{}]+)\}\}/)
-
 		if (meta.name && meta.component) {
 			meta.path = vars ? `${path}, ${vars.join(',')}` : path
 		}
@@ -75,7 +70,7 @@ class action {
 				t = typeof v,
 				currentPath = path
 
-			if (t == 'string' && reg.test(v)) {
+			if (t == 'string' && expr.isExpression(v)) {
 				let f = this.parseExpreesion(v)
 
 				let values = [data]
