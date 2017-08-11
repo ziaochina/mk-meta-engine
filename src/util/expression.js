@@ -3,10 +3,10 @@
  */
 
 // {{***}} 
-const reg = /^\s*\{{2}([.\n\S]+)\}{2}\s*$/m
+const reg = /^\s*\{{2}([\s\S]+)\}{2}\s*$/m
 
 // {{{***}}}
-const reg1 = /^\s*\{{3}([.\n\S]+)\}{3}\s*$/m
+const reg1 = /^\s*\{{3}([\s\S]+)\}{3}\s*$/m
 
 export function isExpression(v){
     return reg.test(v) || reg1.test(v)
