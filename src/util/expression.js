@@ -3,10 +3,10 @@
  */
 
 // {{***}} 
-const reg = new RegExp("^[\s]*[\{]{2}(\n*.*\n*.*\n*)[\}]{2}[\s]*$",["m"])
+const reg = /^\s*\{{2}([.\n\S]+)\}{2}\s*$/m
 
 // {{{***}}}
-const reg1 = new RegExp("^[\s]*[\{]{3}(\n*.*\n*.*\n*)[\}]{3}[\s]*$",["m"])
+const reg1 = /^\s*\{{3}([.\n\S]+)\}{3}\s*$/m
 
 export function isExpression(v){
     return reg.test(v) || reg1.test(v)
