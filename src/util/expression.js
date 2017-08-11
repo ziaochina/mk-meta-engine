@@ -20,7 +20,7 @@ export function getExpressionBody(v){
 
 	if(reg.test(v)){
          //return + 去掉前后{{ }}
-        "return " + v.replace(reg, (word, group) => group)
+        return "return " + v.replace(reg, (word, group) => group)
     }
     
     return v
