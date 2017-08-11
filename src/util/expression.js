@@ -3,10 +3,10 @@
  */
 
 // {{***}} 
-const reg = new RegExp(/^\s*\{{2}(.+)\}{2}\s*$/m)
+const reg = new RegExp("^\s*\{{2}(.+)\}{2}\s*$","m")
 
 // {{{***}}}
-const reg1 = new RegExp(/^\s*\{{3}(.+)\}{3}\s*$/m)
+const reg1 = new RegExp("^\s*\{{3}(.+)\}{3}\s*$","m")
 
 export function isExpression(v){
     return reg.test(v) || reg1.test(v)
