@@ -23,7 +23,7 @@ export function getMeta() {
 			children: 'password:',
 			_visible: `{{{
 				debugger;
-				console.log(data);
+				console.log(arguments);
 				return data.isLogin !== true;
 			}}}`
 		}, {
