@@ -21,7 +21,11 @@ export function getMeta() {
 			name: 'pwdLabel',
 			component: '::span',
 			children: 'password:',
-			_visible: `{{{return data.isLogin !== true}}}`
+			_visible: `{{{
+				debugger;
+				console.log(data);
+				return data.isLogin !== true;
+			}}}`
 		}, {
 			name: 'password',
 			component: '::input',
