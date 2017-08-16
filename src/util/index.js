@@ -11,6 +11,7 @@ import {
     match
 } from './path'
 
+import { isExpression, getExpressionBody } from './util/expression'
 
 const cache = { meta: Map() }
 
@@ -96,13 +97,9 @@ export function parseMeta(meta) {
     return ret
 }
 
-
-
 function isComponent(meta) {
     return typeof meta == 'object' && !!meta.name && !!meta.component
 }
-
-
 
 export function getMeta(appInfo, fullpath, propertys) {
 
@@ -148,8 +145,6 @@ export function getMeta(appInfo, fullpath, propertys) {
 
 }
 
-
-
 export function getField(state, fieldPath) {
     if (!fieldPath) {
         return state.get('data')
@@ -162,12 +157,26 @@ export function getField(state, fieldPath) {
     }
 }
 
+export function getFields(state, fieldPaths) {
+    var ret = {}
+    fieldPaths.forEach(o => ret[o] = getField(state, o))
+    return ret
+}
+
 export function setField(state, fieldPath, value) {
     if (fieldPath instanceof Array) {
         return state.setIn(fieldPath, value)
     } else {
         return state.setIn(fieldPath.split('.'), value)
     }
+}
+
+export function setFields(state, values) {
+    values.forEach(o => {
+        state = setField(state, o.path, o.value)
+    })
+
+    return state
 }
 
 export function updateField(state, fieldPath, fn) {
@@ -179,12 +188,12 @@ export function updateField(state, fieldPath, fn) {
 }
 
 
-
-
 Object.assign(exports, {
     existsParamsInPath,
     parsePath,
     calcBindField,
     match,
+    isExpression,
+    getExpressionBody,
     ...exports
 })

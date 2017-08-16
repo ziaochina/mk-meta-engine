@@ -67,13 +67,21 @@ class reducer {
 
 	getField = util.getField
 
+	getFields = util.getFields
+
 	setField = util.setField
+
+	setFields = util.setFields
 
 	gm = util.getMeta
 
 	gf = util.getField
 
+	gfs = util.getFields
+
 	sf = util.setField
+
+	sfs = util.setFields
 
 	context = contextManager
 

@@ -4,7 +4,6 @@ import * as util from './util'
 import { fromJS } from 'immutable'
 import contextManager from './context'
 import config from './config'
-import * as expr from './util/expression'
 
 class action {
 	constructor(option) {
@@ -30,8 +29,16 @@ class action {
 		return util.getField(this.injections.getState(), fieldPath)
 	}
 
+	getFields = (fieldPaths) => {
+		return util.getFields(this.injections.getState(), fieldPaths)
+	}
+
 	setField = (fieldPath, value) => {
 		return this.injections.reduce('setField', fieldPath, value)
+	}
+
+	setFields = (values) => {
+		return this.injections.reduce('setFields', values)
 	}
 
 	parseExpreesion = (v) => {
@@ -50,7 +57,7 @@ class action {
 
 		var params = this.cache.expressionParams
 
-		var body = expr.getExpressionBody(v)
+		var body = util.getExpressionBody(v)
 
 		this.cache.expression[v] = new Function(...params, body)
 
@@ -70,7 +77,7 @@ class action {
 				t = typeof v,
 				currentPath = path
 
-			if (t == 'string' && expr.isExpression(v)) {
+			if (t == 'string' && util.isExpression(v)) {
 				let f = this.parseExpreesion(v)
 
 				let values = [data]
@@ -226,7 +233,11 @@ class action {
 
 	gf = this.getField
 
+	gfs = this.getFields
+
 	sf = this.setField
+
+	sfs = this.setFields
 
 	context = contextManager
 }
