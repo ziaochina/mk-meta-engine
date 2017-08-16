@@ -6,7 +6,7 @@ export function stringToMoment(v) {
     return moment(v)
 }
 
-export function momentToString(v) {
+export function momentToString(v, format) {
     if (!v)
         return v
     return moment(v).format(format)
