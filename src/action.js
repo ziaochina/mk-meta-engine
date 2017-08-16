@@ -64,6 +64,18 @@ class action {
 		return this.cache.expression[v]
 	}
 
+	execExpression = (v, meta, data, path, rowIndex, vars) => {
+		let f = this.parseExpreesion(v)
+		let values = [data]
+
+		Object.keys(this.metaHandlers).forEach(k => {
+			values.push((...args) => this.metaHandlers[k](...args, { currentPath:path, rowIndex, vars }))
+		})
+
+		values = values.concat([path, rowIndex, vars, meta.path])
+		return f.apply(this, values)
+	}
+
 	updateMeta = (meta, path, rowIndex, vars, data) => {
 		//存在name和component属性追加path路径
 		if (meta.name && meta.component) {
@@ -73,12 +85,19 @@ class action {
 		if (meta["_power"])
 			return
 
+		var excludeProps = meta["_excludeProps"]
+		if(excludeProps && util.isExpression(excludeProps)){
+			excludeProps = execExpression(excludeProps, meta, data, path, rowIndex, vars)
+		}
+
 		Object.keys(meta).forEach(key => {
 			let v = meta[key],
 				t = typeof v,
 				currentPath = path
 
 			if (t == 'string' && util.isExpression(v)) {
+				const ret = execExpression(v, meta, data, currentPath, rowIndex, vars)
+				/*
 				let f = this.parseExpreesion(v)
 
 				let values = [data]
@@ -89,6 +108,7 @@ class action {
 
 				values = values.concat([currentPath, rowIndex, vars, meta.path])
 				let ret = f.apply(this, values)
+				*/
 				if (key == '...' && ret && typeof ret == 'object') {
 					Object.keys(ret).forEach(kk => {
 						meta[kk] = () => ret[kk]
@@ -114,7 +134,6 @@ class action {
 				}
 				this.updateMeta(meta[key], currentPath, rowIndex, vars, data)
 			}
-
 		})
 	}
 
