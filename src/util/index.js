@@ -172,8 +172,8 @@ export function setField(state, fieldPath, value) {
 }
 
 export function setFields(state, values) {
-    values.forEach(o => {
-        state = setField(state, o.path, o.value)
+    Object.keys(values).forEach(k => {
+        state = setField(state, k, values[k])
     })
 
     return state
