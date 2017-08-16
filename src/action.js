@@ -275,6 +275,8 @@ class action {
 
 	momentToString = util.momentToString
 
+	fromJS = util.fromJS
+
 	context = contextManager
 }
 

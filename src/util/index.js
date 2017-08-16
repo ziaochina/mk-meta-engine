@@ -212,5 +212,6 @@ Object.assign(exports, {
     getExpressionBody,
     stringToMoment,
     momentToString,
+    fromJS,
     ...exports
 })
