@@ -11,7 +11,7 @@ import {
     match
 } from './path'
 
-import { isExpression, getExpressionBody } from './util/expression'
+import { isExpression, getExpressionBody } from './expression'
 
 const cache = { meta: Map() }
 
