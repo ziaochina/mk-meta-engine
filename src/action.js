@@ -87,7 +87,7 @@ class action {
 
 		var excludeProps = meta["_excludeProps"]
 		if(excludeProps && util.isExpression(excludeProps)){
-			excludeProps = execExpression(excludeProps, meta, data, path, rowIndex, vars)
+			excludeProps = this.execExpression(excludeProps, meta, data, path, rowIndex, vars)
 		}
 
 		Object.keys(meta).forEach(key => {
@@ -96,7 +96,7 @@ class action {
 				currentPath = path
 
 			if (t == 'string' && util.isExpression(v)) {
-				const ret = execExpression(v, meta, data, currentPath, rowIndex, vars)
+				const ret = this.execExpression(v, meta, data, currentPath, rowIndex, vars)
 				/*
 				let f = this.parseExpreesion(v)
 
