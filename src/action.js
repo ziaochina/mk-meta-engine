@@ -65,6 +65,7 @@ class action {
 	}
 
 	updateMeta = (meta, path, rowIndex, vars, data) => {
+		//存在name和component属性追加path路径
 		if (meta.name && meta.component) {
 			meta.path = vars ? `${path}, ${vars.join(',')}` : path
 		}

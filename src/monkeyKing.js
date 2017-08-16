@@ -47,6 +47,9 @@ function metaToComponent(meta, props) {
     else if (typeof meta == 'object') {
 
         if (meta.component) {
+            if(typeof meta.component == 'function'){
+                meta.component = meta.component()
+            }
             if (meta['_visible'] === false)
                 return null
 
