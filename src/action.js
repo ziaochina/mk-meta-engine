@@ -90,6 +90,14 @@ class action {
 			excludeProps = this.execExpression(excludeProps, meta, data, path, rowIndex, vars)
 		}
 
+		//去除meta的排除属性
+		if(excludeProps && excludeProps instanceof Array){
+			excludeProps.forEach(k=>{
+				if(meta[k])
+					delete meta[k]
+			})		
+		}
+
 		Object.keys(meta).forEach(key => {
 			let v = meta[key],
 				t = typeof v,
@@ -97,18 +105,7 @@ class action {
 
 			if (t == 'string' && util.isExpression(v)) {
 				const ret = this.execExpression(v, meta, data, currentPath, rowIndex, vars)
-				/*
-				let f = this.parseExpreesion(v)
 
-				let values = [data]
-
-				Object.keys(this.metaHandlers).forEach(k => {
-					values.push((...args) => this.metaHandlers[k](...args, { currentPath, rowIndex, vars }))
-				})
-
-				values = values.concat([currentPath, rowIndex, vars, meta.path])
-				let ret = f.apply(this, values)
-				*/
 				if (key == '...' && ret && typeof ret == 'object') {
 					Object.keys(ret).forEach(kk => {
 						meta[kk] = () => ret[kk]
