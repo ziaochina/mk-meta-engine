@@ -69,7 +69,8 @@ function metaToComponent(meta, props) {
             if (meta['_power'] && meta['_power'].indexOf('=>') != -1) {
                 return (...args) => {
                     let varsString = (new Function('return ' + meta['_power']))()(...args)
-                    return metaToComponent({ ...props.gm(meta.path + ',' + varsString), _power: undefined }, props)
+                    const co = metaToComponent({ ...props.gm(meta.path + ',' + varsString), _power: undefined }, props)
+                    return co ? React.cloneElement(co, {path : meta.path + ',' + varsString}) : co
                 }
             }
 
