@@ -12,6 +12,7 @@ import {
 } from './path'
 
 import { isExpression, getExpressionBody } from './expression'
+import { stringToMoment, momentToString } from './trans.js'
 
 const cache = { meta: Map() }
 
@@ -187,6 +188,20 @@ export function updateField(state, fieldPath, fn) {
     }
 }
 
+export function findPathByEvent(e) {
+    const loop = (inst) => {
+        const p = inst._currentElement
+            && inst._currentElement._owner
+            && inst._currentElement._owner._currentElement
+            && inst._currentElement._owner._currentElement.props.path
+
+        if (!p && inst)
+            return loop(inst._hostParent)
+
+        return p
+    }
+    return loop(e._targetInst)
+}
 
 Object.assign(exports, {
     existsParamsInPath,
@@ -195,5 +210,7 @@ Object.assign(exports, {
     match,
     isExpression,
     getExpressionBody,
+    stringToMoment,
+    momentToString,
     ...exports
 })

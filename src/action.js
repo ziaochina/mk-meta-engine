@@ -201,6 +201,19 @@ class action {
 		}
 	}
 
+	focus = (e) => {
+    	const path = util.findPathByEvent(e)
+    	if (this.isFocus(path)) return
+    	this.setField('data.other.focusFieldPath', path)
+	}
+
+	isFocus = (path) => {
+        if (!path) return false
+        const focusFieldPath = this.metaAction.gf('data.other.focusFieldPath')
+        if (!focusFieldPath) return false
+        return path.replace(/\s/g, '') == focusFieldPath.replace(/\s/g, '')
+    }
+
 	getDirectFuns = () => {
 		return {
 			getMeta: (path, propertys) => {
@@ -255,6 +268,12 @@ class action {
 	sf = this.setField
 
 	sfs = this.setFields
+
+	findPathByEvent = util.findPathByEvent
+
+	stringToMoment = util.stringToMoment
+
+	momentToString = util.momentToString
 
 	context = contextManager
 }
