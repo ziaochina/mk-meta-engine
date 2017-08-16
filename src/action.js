@@ -209,7 +209,7 @@ class action {
 
 	isFocus = (path) => {
         if (!path) return false
-        const focusFieldPath = this.metaAction.gf('data.other.focusFieldPath')
+        const focusFieldPath = this.getField('data.other.focusFieldPath')
         if (!focusFieldPath) return false
         return path.replace(/\s/g, '') == focusFieldPath.replace(/\s/g, '')
     }
