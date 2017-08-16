@@ -26,7 +26,6 @@ export function parsePath(path) {
             vars: vars
         }
     }
-
 }
 
 /**

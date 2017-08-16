@@ -52,7 +52,7 @@ class action {
 		if (!this.cache.expressionParams) {
 			this.cache.expressionParams = ['data']
 				.concat(Object.keys(this.metaHandlers).map(k => "$" + k))
-				.concat(['_path', '_rowIndex', '_vars'])
+				.concat(['_path', '_rowIndex', '_vars', '_fullPath'])
 		}
 
 		var params = this.cache.expressionParams
@@ -87,7 +87,7 @@ class action {
 					values.push((...args) => this.metaHandlers[k](...args, { currentPath, rowIndex, vars }))
 				})
 
-				values = values.concat([currentPath, rowIndex, vars])
+				values = values.concat([currentPath, rowIndex, vars, meta.path])
 				let ret = f.apply(this, values)
 				if (key == '...' && ret && typeof ret == 'object') {
 					Object.keys(ret).forEach(kk => {
