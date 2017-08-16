@@ -16,14 +16,14 @@ export function parsePath(path) {
     if (!path) return
     if (path.indexOf(',') == -1) {
         return {
-            path
+            path : path.replace(/\s/g, '')
         }
     } else {
         let segments = path.split(","),
             vars = segments.slice(1)
         return {
-            path: segments[0],
-            vars: vars
+            path: segments[0].replace(/\s/g, ''),
+            vars: vars.map(o=>o.replace(/\s/g, ''))
         }
     }
 }
