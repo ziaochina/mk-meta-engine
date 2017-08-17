@@ -190,6 +190,7 @@ export function updateField(state, fieldPath, fn) {
 
 export function findPathByEvent(e) {
     const loop = (inst) => {
+        if(!inst) return ''
         const p = inst._currentElement
             && inst._currentElement._owner
             && inst._currentElement._owner._currentElement

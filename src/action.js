@@ -203,8 +203,9 @@ class action {
 
 	focus = (e) => {
     	const path = util.findPathByEvent(e)
-    	if (this.isFocus(path)) return
-    	this.setField('data.other.focusFieldPath', path)
+    	if (this.isFocus(path)) return false
+		this.setField('data.other.focusFieldPath', path)
+		return true
 	}
 
 	isFocus = (path) => {
