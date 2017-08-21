@@ -1,16 +1,12 @@
-import Immutable, {
-	Map,
-	List
-} from 'immutable'
+import Immutable, { Map, List } from 'immutable'
 
 import contextManager from './context'
 
-import * as util from './util'
+import * as common from './common'
 
 class reducer {
 	constructor(option) {
 		this.appInfo = option.appInfo
-		this.onEvent = this.onEvent.bind(this)
 	}
 
 	init = (state, option) => {
@@ -44,44 +40,25 @@ class reducer {
 			.set('data', data)
 	}
 
-	onEvent = (state, eventName, option) => {
-		const { path } = option
+	getMeta = common.getMeta
 
-		const fieldPath = util.getMeta(this.appInfo, path, 'bindField')
+	getField = common.getField
 
-		switch (eventName) {
-			case 'onFieldFocus':
-				return focus(state, path)
-			case 'onFieldChange':
-				return util.setField(state, fieldPath, option.value)
-			default:
-				return state
-		}
-	}
+	getFields = common.getFields
 
-	focus = (state, path) => {
-		return util.setter(state, 'meta', 'focusField', path)
-	}
+	setField = common.setField
 
-	getMeta = util.getMeta
+	setFields = common.setFields
 
-	getField = util.getField
+	gm = common.getMeta
 
-	getFields = util.getFields
+	gf = common.getField
 
-	setField = util.setField
+	gfs = common.getFields
 
-	setFields = util.setFields
+	sf = common.setField
 
-	gm = util.getMeta
-
-	gf = util.getField
-
-	gfs = util.getFields
-
-	sf = util.setField
-
-	sfs = util.setFields
+	sfs = common.setFields
 
 	context = contextManager
 

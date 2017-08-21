@@ -1,6 +1,7 @@
 import React from 'react'
 import { AppLoader } from 'mk-app-loader'
-import * as util from './util'
+import * as common from './common'
+import utils from 'mk-utils'
 import { fromJS } from 'immutable'
 import contextManager from './context'
 import config from './config'
@@ -11,7 +12,7 @@ class action {
 		this.meta = fromJS(option.appInfo.meta)
 		this.cache = {}
 
-		util.setMeta(option.appInfo)
+		common.setMeta(option.appInfo)
 	}
 
 	config = ({ metaHandlers }) => {
@@ -26,11 +27,11 @@ class action {
 	}
 
 	getField = (fieldPath) => {
-		return util.getField(this.injections.getState(), fieldPath)
+		return common.getField(this.injections.getState(), fieldPath)
 	}
 
 	getFields = (fieldPaths) => {
-		return util.getFields(this.injections.getState(), fieldPaths)
+		return common.getFields(this.injections.getState(), fieldPaths)
 	}
 
 	setField = (fieldPath, value) => {
@@ -57,7 +58,7 @@ class action {
 
 		var params = this.cache.expressionParams
 
-		var body = util.getExpressionBody(v)
+		var body = utils.expression.getExpressionBody(v)
 
 		this.cache.expression[v] = new Function(...params, body)
 
@@ -86,7 +87,7 @@ class action {
 			return
 
 		var excludeProps = meta["_excludeProps"]
-		if(excludeProps && util.isExpression(excludeProps)){
+		if(excludeProps && utils.expression.isExpression(excludeProps)){
 			excludeProps = this.execExpression(excludeProps, meta, data, path, rowIndex, vars)
 		}
 
@@ -103,7 +104,7 @@ class action {
 				t = typeof v,
 				currentPath = path
 
-			if (t == 'string' && util.isExpression(v)) {
+			if (t == 'string' && utils.expression.isExpression(v)) {
 				const ret = this.execExpression(v, meta, data, currentPath, rowIndex, vars)
 
 				if (key == '...' && ret && typeof ret == 'object') {
@@ -134,82 +135,28 @@ class action {
 		})
 	}
 
-	calcBindField = (bindField, vars) => {
-		if (!bindField) return bindField
-
-		if (!vars) return bindField
-
-		var hit = false
-
-		//root.detail.code,0;form.detail.${0}.code => form.detail.0.code
-		//root.detail,0;form.detail => form.detail.0
-		bindField = bindField.replace(/{(\d+)}/g, (match, index) => {
-			hit = true
-			return vars[index]
-		})
-		return hit ? bindField : bindField + '.' + vars[0]
-	}
-
 	getMeta = (fullPath, propertys) => {
-		const meta = util.getMeta(this.appInfo, fullPath, propertys),
-			parsedPath = util.parsePath(fullPath),
+		const meta = common.getMeta(this.appInfo, fullPath, propertys),
+			parsedPath = utils.path.parsePath(fullPath),
 			path = parsedPath.path,
 			rowIndex = parsedPath.vars ? parsedPath.vars[0] : undefined,
 			vars = parsedPath.vars,
-			data = util.getField(this.injections.getState()).toJS()
+			data = common.getField(this.injections.getState()).toJS()
 
 		meta['_power'] = undefined
 		this.updateMeta(meta, path, rowIndex, vars, data)
 		return meta
 	}
 
-	asyncGet = async (path, property) => {
-		var parsedPath = util.parsePath(path),
-			eventSource = (parsedPath || {
-				path: 'root'
-			}).path
-
-		if (typeof property === 'string') {
-			if (this.event && this.event[eventSource] && this.event[eventSource][propertys]) {
-
-				var response = await this.event[eventSource][propertys]({
-					path: eventSource,
-					rowIndex: parsedPath.vars ? parsedPath.vars[0] : undefined
-				})
-
-				return Promise.resolve(response)
-			}
-		}
-	}
-
-	onEvent = (eventName, option) => {
-		var parsedPath = util.parsePath(option.path),
-			eventSource = (parsedPath || {
-				path: 'root'
-			}).path
-
-		const strHandler = util.getMeta(this.appInfo, eventSource, eventName)
-		if (strHandler && strHandler.substring(0, 2) === '$$' && this.metaHandlers[strHandler.substr(2)]) {
-			this.metaHandlers[strHandler.substr(2)]({
-				...option,
-				path: eventSource,
-				rowIndex: parsedPath.vars ? parsedPath.vars[0] : option.rowIndex
-			})
-		}
-		else {
-			this.injections.reduce('onEvent', eventName, option)
-		}
-	}
-
-	focusByEvent = (e) => {
-		const path = util.findPathByEvent(e)
-		return this.focus(path)
-	}
-
 	focus = (path) => {
 		if (this.isFocus(path)) return false
 		this.setField('data.other.focusFieldPath', path)
 		return true
+	}
+
+	focusByEvent = (e) => {
+		const path = utils.path.findPathByEvent(e)
+		return this.focus(path)
 	}
 
 	isFocus = (path) => {
@@ -227,18 +174,12 @@ class action {
 			getField: (fieldPath) => {
 				return this.getField(fieldPath)
 			},
-			asyncGet: async (path, propertys) => {
-				return await this.asyncGet(path, property)
-			},
 			gm: (path, propertys) => {
 				return this.getMeta(path, propertys)
 			},
 			gf: (fieldPath) => {
 				return this.getField(fieldPath)
 			},
-			ag: async (path, propertys) => {
-				return await this.asyncGet(path, property)
-			}
 		}
 	}
 
@@ -274,13 +215,13 @@ class action {
 
 	sfs = this.setFields
 
-	findPathByEvent = util.findPathByEvent
+	findPathByEvent = utils.path.findPathByEvent
 
-	stringToMoment = util.stringToMoment
+	stringToMoment = utils.moment.stringToMoment
 
-	momentToString = util.momentToString
+	momentToString = utils.moment.momentToString
 
-	fromJS = util.fromJS
+	fromJS = fromJS
 
 	context = contextManager
 }
