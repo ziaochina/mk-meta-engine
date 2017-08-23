@@ -70,7 +70,7 @@ class action {
 		let values = [data]
 
 		Object.keys(this.metaHandlers).forEach(k => {
-			values.push((...args) => this.metaHandlers[k](...args, { currentPath:path, rowIndex, vars }))
+			values.push((...args) => this.metaHandlers[k](...args, { currentPath: path, rowIndex, vars }))
 		})
 
 		values = values.concat([path, rowIndex, vars, meta.path])
@@ -87,16 +87,16 @@ class action {
 			return
 
 		var excludeProps = meta["_excludeProps"]
-		if(excludeProps && utils.expression.isExpression(excludeProps)){
+		if (excludeProps && utils.expression.isExpression(excludeProps)) {
 			excludeProps = this.execExpression(excludeProps, meta, data, path, rowIndex, vars)
 		}
 
 		//去除meta的排除属性
-		if(excludeProps && excludeProps instanceof Array){
-			excludeProps.forEach(k=>{
-				if(meta[k])
+		if (excludeProps && excludeProps instanceof Array) {
+			excludeProps.forEach(k => {
+				if (meta[k])
 					delete meta[k]
-			})		
+			})
 		}
 
 		Object.keys(meta).forEach(key => {
@@ -118,12 +118,17 @@ class action {
 			}
 			else if (v instanceof Array) {
 
-				v.forEach(c => {
-					currentPath = path
-					if (c.name && c.component) {
-						currentPath = currentPath ? `${currentPath}.${key}.${c.name}` : `${key}.${c.name}`
+				v.forEach((c, index) => {
+					if(typeof c == 'string' && utils.expression.isExpression(c)){
+						meta[key][index] = this.execExpression(c, meta, data, currentPath, rowIndex, vars)
 					}
-					this.updateMeta(c, currentPath, rowIndex, vars, data)
+					else{
+						currentPath = path
+						if (c.name && c.component) {
+							currentPath = currentPath ? `${currentPath}.${key}.${c.name}` : `${key}.${c.name}`
+						}
+						this.updateMeta(c, currentPath, rowIndex, vars, data)
+					}
 				})
 			}
 			else if (t == 'object') {
@@ -160,11 +165,11 @@ class action {
 	}
 
 	isFocus = (path) => {
-        if (!path) return false
-        const focusFieldPath = this.getField('data.other.focusFieldPath')
-        if (!focusFieldPath) return false
-        return path.replace(/\s/g, '') == focusFieldPath.replace(/\s/g, '')
-    }
+		if (!path) return false
+		const focusFieldPath = this.getField('data.other.focusFieldPath')
+		if (!focusFieldPath) return false
+		return path.replace(/\s/g, '') == focusFieldPath.replace(/\s/g, '')
+	}
 
 	getDirectFuns = () => {
 		return {
