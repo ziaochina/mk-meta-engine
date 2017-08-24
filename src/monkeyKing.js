@@ -57,7 +57,14 @@ function metaToComponent(meta, props) {
                 return null
 
             if (meta['_power'] && /for[ ]+in/.test(meta['_power'])) {
-                let items = props.gf(meta['_power'].replace(/for[ ]+in/, '').replace(' ', ''))
+                var p = meta['_power']
+                    .replace(/for[ ]+in/, '')
+                    .replace(' ', '')
+
+                if(p.indexOf('_rowIndex') != -1)
+                    p = p.replace('_rowIndex',meta.path.split(',').length > 1 ? meta.path.split(',')[1].replace(' ',''): 0)
+
+                let items = props.gf(p)
 
                 if (!items || items.size == 0) return
                 items = items.toJS()
