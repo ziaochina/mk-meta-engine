@@ -1,5 +1,5 @@
 import Immutable, { Map, List, fromJS } from 'immutable'
-import { path } from 'mk-utils'
+import utils,{ path } from 'mk-utils'
 
 const { existsParamsInPath, parsePath } = path
 
@@ -114,9 +114,9 @@ function parseMeta(meta) {
         if (!(propValue instanceof Immutable.Map)) {
             return
         }
-
         if (propValue.get('name') && propValue.get('component')) {
-            parentPath = parentPath ? `${parentPath}.${propValue.get('name')}` : propValue.get('name')
+            const name = utils.string.trim(propValue.get('name'))
+            parentPath = parentPath ? `${parentPath}.${name}` : name
             ret = ret.set(parentPath, parentRealPath)
         }
 

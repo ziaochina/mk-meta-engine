@@ -1,6 +1,6 @@
 {
   "name": "mk-meta-engine",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "",
   "main": "./lib/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "homepage": "https://github.com/ziaochina/mk-meta-engine#readme",
   "dependencies": {
     "mk-app-loader": "^1.0.0",
-    "mk-utils": "^1.0.12",
+    "mk-utils": "^1.0.16",
     "omit.js": "^0.1.0"
   },
   "devDependencies": {
