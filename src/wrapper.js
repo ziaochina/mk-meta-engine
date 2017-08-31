@@ -24,9 +24,10 @@ export default function wrapper(option) {
 			}
 
 			render() {
+				if(this.props.notRender === true)
+					return null
 				if (!WrappedComponent)
 					return null
-
 				if (!this.props.payload || !this.props.payload.get('data'))
 					return null
 
