@@ -18,17 +18,28 @@ function config(option) {
 
 	cf.registerComponent('AppLoader', AppLoader)
 
-	if (!components || components.length == 0)
-		return
+	if (components && components.length > 0) {
+		components.forEach(c => {
+			if (c.appName)
+				cf.registerAppComponent(c.appName, c.name, c.component)
 
+			else
+				cf.registerComponent(c.name, c.component)
+		})
+	}
 
-	components.forEach(c => {
-		if (c.appName)
-			cf.registerComponent(c.appName, c.name, c.component)
+	const apps = option.apps
+	if (apps) {
+		Object.keys(apps).forEach(k => {
+			let a = apps[k]
+			if (a.components && a.components.length > 0) {
+				a.components.forEach(c => {
+					cf.registerAppComponent(a.name, c.name, c.component)
+				})
+			}
+		})
+	}
 
-		else
-			cf.registerComponent(c.name, c.component)
-	})
 }
 
 config.getToast = () => toast
