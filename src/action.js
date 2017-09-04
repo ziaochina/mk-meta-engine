@@ -26,6 +26,8 @@ class action {
 		this.metaHandlers && this.metaHandlers['onInit'] && this.metaHandlers['onInit']({ component, injections })
 	}
 
+
+
 	getField = (fieldPath) => {
 		return common.getField(this.injections.getState(), fieldPath)
 	}
@@ -119,10 +121,10 @@ class action {
 			else if (v instanceof Array) {
 
 				v.forEach((c, index) => {
-					if(typeof c == 'string' && utils.expression.isExpression(c)){
+					if (typeof c == 'string' && utils.expression.isExpression(c)) {
 						meta[key][index] = this.execExpression(c, meta, data, currentPath, rowIndex, vars)
 					}
-					else{
+					else {
 						currentPath = path
 						if (c.name && c.component) {
 							currentPath = currentPath ? `${currentPath}.${key}.${c.name}` : `${key}.${c.name}`
@@ -151,6 +153,10 @@ class action {
 		meta['_power'] = undefined
 		this.updateMeta(meta, path, rowIndex, vars, data)
 		return meta
+	}
+
+	setMetaForce = (appName, meta) => {
+		common.setMetaForce(appName, meta)
 	}
 
 	focus = (path) => {

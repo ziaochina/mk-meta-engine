@@ -1,5 +1,5 @@
 import Immutable, { Map, List, fromJS } from 'immutable'
-import utils,{ path } from 'mk-utils'
+import utils, { path } from 'mk-utils'
 
 const { existsParamsInPath, parsePath } = path
 
@@ -17,7 +17,14 @@ export function setMeta(appInfo) {
     if (cache.meta.has(appName))
         return
 
-    const meta = fromJS(appInfo.meta)
+    setMetaForce(appName, appInfo.meta)
+}
+
+export function setMetaForce(appName, meta) {
+    if (!appName || !meta)
+        return
+
+    meta = fromJS(meta)
 
     cache.meta = cache.meta
         .setIn([appName, 'meta'], meta)
