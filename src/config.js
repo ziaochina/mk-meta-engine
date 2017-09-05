@@ -5,7 +5,7 @@ import {
 
 import cf from './componentFactory'
 
-var toast, notification, modal
+var toast, notification, modal, errorBox
 
 function config(option) {
 	const components = option.components
@@ -13,6 +13,7 @@ function config(option) {
 	toast = option.toast
 	notification = option.notification
 	modal = option.modal
+	errorBox = option.errorBox
 
 	appLoaderConfig(option)
 
@@ -45,5 +46,6 @@ function config(option) {
 config.getToast = () => toast
 config.getNotification = () => notification
 config.getModal = () => modal
+config.getErrorBox = () => errorBox
 
 export default config

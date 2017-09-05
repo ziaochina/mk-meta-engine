@@ -76,7 +76,13 @@ class action {
 		})
 
 		values = values.concat([path, rowIndex, vars, meta.path])
-		return f.apply(this, values)
+		try{
+			return f.apply(this, values)
+		}
+		catch(e){
+			console.error(e)
+			return 
+		}
 	}
 
 	updateMeta = (meta, path, rowIndex, vars, data) => {

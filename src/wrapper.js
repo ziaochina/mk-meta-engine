@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { RedboxReact } from 'mk-component'
 import ReactDOM from 'react-dom'
-
 import monkeyKing from './monkeyKing'
+import config from './config'
 
 
 function wrapTryCatch(Component) {
@@ -12,8 +11,13 @@ function wrapTryCatch(Component) {
 		try {
 			return originalRender.apply(this, arguments)
 		} catch (err) {
-			console.error(err);
-			return <RedboxReact error={err} />
+			console.error(err)
+			const ErrorBox = config.getErrorBox()
+			if(ErrorBox){
+				return <ErrorBox error={err} />
+			}else{
+				return <div >{err.stack}</div>
+			}
 		}
 	}
 	return Component
