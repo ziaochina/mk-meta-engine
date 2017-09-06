@@ -1,5 +1,6 @@
 import ReactUpdates from "react-dom/lib/ReactUpdates"
 import ReactDefaultBatchingStrategy from "react-dom/lib/ReactDefaultBatchingStrategy"
+import utils from 'mk-utils'
 
 let isHandlingError = false
 
@@ -12,7 +13,7 @@ const ReactTryCatchBatchingStrategy = {
         try {
             ReactDefaultBatchingStrategy.batchedUpdates(...args)
         } catch (e) {
-            console.error(e)
+            utils.exception.error(e)
         }
     },
 }

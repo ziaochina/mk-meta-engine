@@ -1,6 +1,6 @@
 import { config as appLoaderConfig, AppLoader } from 'mk-app-loader'
 import cf from './componentFactory'
-import tryCatchError from './reactTryCatchBatchingStrategy'
+
 
 var toast, notification, modal, errorBox
 
@@ -42,6 +42,5 @@ function config(option) {
 config.getToast = () => toast
 config.getNotification = () => notification
 config.getModal = () => modal
-config.getErrorBox = () => errorBox
 
 export default config
