@@ -4,6 +4,7 @@ import action from './action'
 import reducer from './reducer'
 import wrapper from './wrapper'
 import componentFactory from './componentFactory'
+import tryCatchError from './reactTryCatchBatchingStrategy'
 
 export default {
 	start,

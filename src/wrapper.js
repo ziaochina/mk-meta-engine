@@ -12,11 +12,12 @@ function wrapTryCatch(Component) {
 			return originalRender.apply(this, arguments)
 		} catch (err) {
 			console.error(err)
+			
 			const ErrorBox = config.getErrorBox()
 			if(ErrorBox){
 				return <ErrorBox error={err} />
 			}else{
-				return <div >{err.stack}</div>
+				return <div >{err.stack || err}</div>
 			}
 		}
 	}

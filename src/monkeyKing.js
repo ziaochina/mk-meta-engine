@@ -2,6 +2,7 @@ import React from 'react'
 import { AppLoader } from 'mk-app-loader'
 import componentFactory from './componentFactory'
 import omit from 'omit.js'
+import config from './config'
 
 function parseMetaProps(meta, props) {
     const ret = {}
@@ -47,7 +48,7 @@ function metaToComponent(meta, props) {
     else if (typeof meta == 'object') {
 
         if (meta.component) {
-            if(typeof meta.component == 'function'){
+            if (typeof meta.component == 'function') {
                 meta.component = meta.component()
             }
             if (meta['_visible'] === false)
@@ -61,8 +62,8 @@ function metaToComponent(meta, props) {
                     .replace(/for[ ]+in/, '')
                     .replace(' ', '')
 
-                if(p.indexOf('_rowIndex') != -1)
-                    p = p.replace('_rowIndex',meta.path.split(',').length > 1 ? meta.path.split(',')[1].replace(' ',''): 0)
+                if (p.indexOf('_rowIndex') != -1)
+                    p = p.replace('_rowIndex', meta.path.split(',').length > 1 ? meta.path.split(',')[1].replace(' ', '') : 0)
 
                 let items = props.gf(p)
 
@@ -77,7 +78,7 @@ function metaToComponent(meta, props) {
                 return (...args) => {
                     let varsString = (new Function('return ' + meta['_power']))()(...args)
                     const co = metaToComponent({ ...props.gm(meta.path + ',' + varsString), _power: undefined }, props)
-                    return co ? React.cloneElement(co, {path : meta.path + ',' + varsString}) : co
+                    return co ? React.cloneElement(co, { path: meta.path + ',' + varsString }) : co
                 }
             }
 
@@ -115,9 +116,20 @@ function metaToComponent(meta, props) {
 }
 
 const MonkeyKing = (props) => {
-    const { path, gm } = props
-    const component = metaToComponent(gm(path), props)
-    return component
+    try {
+        const { path, gm } = props
+        const component = metaToComponent(gm(path), props)
+        return component
+    }
+    catch (err) {
+        console.error(err)
+        const ErrorBox = config.getErrorBox()
+        if (ErrorBox) {
+            return <ErrorBox error={err} />
+        } else {
+            return <div>{err.stack || err}</div>
+        }
+    }
 }
 
 export default MonkeyKing
