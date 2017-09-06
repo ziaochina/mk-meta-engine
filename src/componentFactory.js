@@ -30,7 +30,10 @@ class componentFactory {
             throw 'component name can not null'
 
         if (name.substring(0, 2) == '::') {
-            return name.substr(2)
+            if(name.substr(2))
+                return  name.substr(2) 
+            else
+                throw `没有组件. name: ::`
         }
 
         const nameSegs = name.split('.'),
