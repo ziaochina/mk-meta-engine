@@ -63,12 +63,7 @@ class action {
 		var body = utils.expression.getExpressionBody(v)
 
 		this.cache.expression[v] = new Function(...params, body)
-		try{
-			return this.cache.expression[v]
-		}
-		catch(e){
-			utils.exception.error(e)
-		}
+		return this.cache.expression[v]
 	}
 
 	execExpression = (v, meta, data, path, rowIndex, vars) => {
@@ -80,11 +75,11 @@ class action {
 		})
 
 		values = values.concat([path, rowIndex, vars, meta.path])
-		try{
+		try {
 			return f.apply(this, values)
 		}
-		catch(e){
-			console.error(e)
+		catch (e) {
+			utils.exception.error(e)
 		}
 	}
 
