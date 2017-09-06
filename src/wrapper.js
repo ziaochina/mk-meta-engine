@@ -3,27 +3,6 @@ import ReactDOM from 'react-dom'
 import monkeyKing from './monkeyKing'
 import config from './config'
 
-
-function wrapTryCatch(Component) {
-	const originalRender = Component.prototype.render
-
-	Component.prototype.render = function tryRender() {
-		try {
-			return originalRender.apply(this, arguments)
-		} catch (err) {
-			console.error(err)
-			
-			const ErrorBox = config.getErrorBox()
-			if(ErrorBox){
-				return <ErrorBox error={err} />
-			}else{
-				return <div >{err.stack || err}</div>
-			}
-		}
-	}
-	return Component
-}
-
 export default function wrapper(option) {
 	return WrappedComponent => {
 		return class internal extends Component {
@@ -49,8 +28,7 @@ export default function wrapper(option) {
 				if (!this.props.payload || !this.props.payload.get('data'))
 					return null
 
-				const C = wrapTryCatch(WrappedComponent)
-				return <C {...this.props} monkeyKing={monkeyKing} />
+				return <WrappedComponent {...this.props} monkeyKing={monkeyKing} />
 			}
 		}
 	}

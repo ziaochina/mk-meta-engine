@@ -116,20 +116,8 @@ function metaToComponent(meta, props) {
 }
 
 const MonkeyKing = (props) => {
-    try {
-        const { path, gm } = props
-        const component = metaToComponent(gm(path), props)
-        return component
-    }
-    catch (err) {
-        console.error(err)
-        const ErrorBox = config.getErrorBox()
-        if (ErrorBox) {
-            return <ErrorBox error={err} />
-        } else {
-            return <div>{err.stack || err}</div>
-        }
-    }
+    const { path, gm } = props
+    return metaToComponent(gm(path), props)
 }
 
 export default MonkeyKing
