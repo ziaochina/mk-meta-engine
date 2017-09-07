@@ -6,6 +6,8 @@ import { fromJS } from 'immutable'
 import contextManager from './context'
 import config from './config'
 
+const appInstances = {}
+
 class action {
 	constructor(option) {
 		this.appInfo = option.appInfo
@@ -23,9 +25,23 @@ class action {
 		this.component = component
 		this.injections = injections
 
+		appInstances[component.props.appFullName] = {
+			appName: component.props.appName,
+			appQuery: component.props.appQuery,
+			app: config.getApps()[component.props.appName],
+			instance: component
+		}
+
 		this.metaHandlers && this.metaHandlers['onInit'] && this.metaHandlers['onInit']({ component, injections })
 	}
 
+	unmount = () => {
+		delete appInstances[this.component.appFullName]
+	}
+
+	getAppInstances = () => {
+		return appInstances
+	}
 
 
 	getField = (fieldPath) => {

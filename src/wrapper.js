@@ -20,6 +20,11 @@ export default function wrapper(option) {
 				return false
 			}
 
+			componentWillUnmount() {
+				this.props.unmout()
+			}
+
+
 			render() {
 				if (this.props.notRender === true)
 					return null

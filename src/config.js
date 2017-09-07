@@ -2,7 +2,7 @@ import { config as appLoaderConfig, AppLoader } from 'mk-app-loader'
 import cf from './componentFactory'
 
 
-var toast, notification, modal, errorBox
+var toast, notification, modal, errorBox, apps
 
 function config(option) {
 	const components = option.components
@@ -11,6 +11,7 @@ function config(option) {
 	notification = option.notification
 	modal = option.modal
 	errorBox = option.errorBox
+	apps = option.apps
 
 	appLoaderConfig(option)
 
@@ -26,7 +27,6 @@ function config(option) {
 		})
 	}
 
-	const apps = option.apps
 	if (apps) {
 		Object.keys(apps).forEach(k => {
 			let a = apps[k]
@@ -42,5 +42,6 @@ function config(option) {
 config.getToast = () => toast
 config.getNotification = () => notification
 config.getModal = () => modal
+config.getApps = () => apps
 
 export default config
