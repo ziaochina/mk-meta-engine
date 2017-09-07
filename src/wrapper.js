@@ -21,7 +21,7 @@ export default function wrapper(option) {
 			}
 
 			componentWillUnmount() {
-				this.props.unmout()
+				this.props.unmount()
 			}
 
 
