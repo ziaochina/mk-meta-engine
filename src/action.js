@@ -28,7 +28,7 @@ class action {
 		appInstances[component.props.appFullName] = {
 			appName: component.props.appName,
 			appQuery: component.props.appQuery,
-			app: config.getApps()[component.props.appName],
+			//app: config.getApps()[component.props.appName],
 			instance: component
 		}
 
