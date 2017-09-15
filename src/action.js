@@ -162,12 +162,14 @@ class action {
 		})
 	}
 
-	getMeta = (fullPath, propertys) => {
+	getMeta = (fullPath, propertys, data) => {
 		const meta = common.getMeta(this.appInfo, fullPath, propertys),
 			parsedPath = utils.path.parsePath(fullPath),
 			path = parsedPath.path,
 			rowIndex = parsedPath.vars ? parsedPath.vars[0] : undefined,
-			vars = parsedPath.vars,
+			vars = parsedPath.vars
+		
+		if(!data)
 			data = common.getField(this.injections.getState()).toJS()
 
 		meta['_power'] = undefined
@@ -199,14 +201,14 @@ class action {
 
 	getDirectFuns = () => {
 		return {
-			getMeta: (path, propertys) => {
-				return this.getMeta(path, propertys)
+			getMeta: (...args) => {
+				return this.getMeta(...args)
 			},
 			getField: (fieldPath) => {
 				return this.getField(fieldPath)
 			},
-			gm: (path, propertys) => {
-				return this.getMeta(path, propertys)
+			gm: (...args) => {
+				return this.getMeta(...args)
 			},
 			gf: (fieldPath) => {
 				return this.getField(fieldPath)

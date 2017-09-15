@@ -4,7 +4,7 @@ import componentFactory from './componentFactory'
 import omit from 'omit.js'
 import config from './config'
 
-function parseMetaProps(meta, props) {
+function parseMetaProps(meta, props, data) {
     const ret = {}
 
     Object.keys(meta).forEach(key => {
@@ -14,7 +14,7 @@ function parseMetaProps(meta, props) {
         if (v instanceof Array) {
             ret[key] = []
             v.forEach(c => {
-                let mc = metaToComponent(c, props)
+                let mc = metaToComponent(c, props, data)
                 if (mc instanceof Array)
                     ret[key] = ret[key].concat(mc)
                 else
@@ -22,7 +22,7 @@ function parseMetaProps(meta, props) {
             })
         }
         else if (t == 'object') {
-            ret[key] = metaToComponent(v, props)
+            ret[key] = metaToComponent(v, props, data)
         }
         else if (t == 'function') {
             ret[key] = v()
@@ -35,7 +35,7 @@ function parseMetaProps(meta, props) {
     return ret
 }
 
-function metaToComponent(meta, props) {
+function metaToComponent(meta, props, data) {
     if (!meta) {
         return meta
     }
@@ -70,14 +70,14 @@ function metaToComponent(meta, props) {
                 if (!items || items.size == 0) return
                 items = items.toJS()
                 return items.map((o, index) => {
-                    return metaToComponent({ ...props.gm(meta.path + ',' + index), _power: undefined }, props)
+                    return metaToComponent({ ...props.gm(meta.path + ',' + index, undefined, data), _power: undefined }, props, data)
                 })
             }
 
             if (meta['_power'] && meta['_power'].indexOf('=>') != -1) {
                 return (...args) => {
                     let varsString = (new Function('return ' + meta['_power']))()(...args)
-                    const co = metaToComponent({ ...props.gm(meta.path + ',' + varsString), _power: undefined }, props)
+                    const co = metaToComponent({ ...props.gm(meta.path + ',' + varsString, undefined, data), _power: undefined }, props, data)
                     return co ? React.cloneElement(co, { path: meta.path + ',' + varsString }) : co
                 }
             }
@@ -88,7 +88,7 @@ function metaToComponent(meta, props) {
             var allProps = {
                 key: meta.path,
                 ...props,
-                ...parseMetaProps(meta, props),
+                ...parseMetaProps(meta, props, data),
 
             }
 
@@ -107,7 +107,7 @@ function metaToComponent(meta, props) {
             //}
         }
         else {
-            return parseMetaProps(meta, props)
+            return parseMetaProps(meta, props, data)
         }
     }
     else {
@@ -116,8 +116,9 @@ function metaToComponent(meta, props) {
 }
 
 const MonkeyKing = (props) => {
-    const { path, gm } = props
-    return metaToComponent(gm(path), props)
+    const { path, gm, gf } = props
+    const data = gf().toJS()
+    return metaToComponent(gm(path, undefined, data), props, data)
 }
 
 export default MonkeyKing
