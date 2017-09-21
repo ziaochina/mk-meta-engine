@@ -22,11 +22,16 @@ function parseMetaProps(meta, props, data) {
             })
         }
         else if (t == 'object') {
-            ret[key] = metaToComponent(v, props, data)
+            if(v && v._notParse){
+                ret[key] = v    
+            }
+            else{
+                ret[key] = metaToComponent(v, props, data)
+            }
         }
-        else if (t == 'function') {
+        /*else if (t == 'function') {
             ret[key] = v()
-        }
+        }*/
         else {
             ret[key] = v
         }

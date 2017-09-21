@@ -131,11 +131,13 @@ class action {
 
 				if (key == '...' && ret && typeof ret == 'object') {
 					Object.keys(ret).forEach(kk => {
-						meta[kk] = () => ret[kk]
+						//meta[kk] = () => ret[kk]
+						meta[kk] = ret[kk]
 					})
 					delete meta['...']
 				} else {
-					meta[key] = () => ret
+					//meta[key] = () => ret
+					meta[key] = ret
 				}
 			}
 			else if (v instanceof Array) {
