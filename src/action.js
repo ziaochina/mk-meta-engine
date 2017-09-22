@@ -71,7 +71,7 @@ class action {
 		if (!this.cache.expressionParams) {
 			this.cache.expressionParams = ['data']
 				.concat(Object.keys(this.metaHandlers).map(k => "$" + k))
-				.concat(['_path', '_rowIndex', '_vars', '_fullPath'])
+				.concat(['_path', '_rowIndex', '_vars', '_ctrlPath'])
 		}
 
 		var params = this.cache.expressionParams
@@ -82,15 +82,14 @@ class action {
 		return this.cache.expression[v]
 	}
 
-	execExpression = (v, meta, data, path, rowIndex, vars) => {
-		let f = this.parseExpreesion(v)
+	execExpression = (expressContent, data, path, rowIndex, vars, ctrlPath) => {
+		let f = this.parseExpreesion(expressContent)
 		let values = [data]
 
 		Object.keys(this.metaHandlers).forEach(k => {
 			values.push((...args) => this.metaHandlers[k](...args, { currentPath: path, rowIndex, vars }))
 		})
-
-		values = values.concat([path, rowIndex, vars, meta.path])
+		values = values.concat([path, rowIndex, vars, ctrlPath])
 		try {
 			return f.apply(this, values)
 		}
@@ -99,18 +98,99 @@ class action {
 		}
 	}
 
-	updateMeta = (meta, path, rowIndex, vars, data) => {
-		//存在name和component属性追加path路径
-		if (meta.name && meta.component) {
-			meta.path = vars ? `${path}, ${vars.join(',')}` : path
+
+	needUpdate = (meta) => {
+		if (!meta)
+			return false
+
+		const t = typeof meta
+
+		if (t == 'string' && utils.expression.isExpression(meta))
+			return true
+
+		if (t != 'object')
+			return false
+
+		if (meta["_notParse"] === true) {
+			return false
 		}
 
-		if (meta["_power"])
+		return !(t != 'object'
+			|| !!meta['$$typeof']
+			|| !!meta['_isAMomentObject']
+			|| !!meta["_power"]
+			|| meta["_visible"] === false)
+	}
+
+	updateMeta = (meta, path, rowIndex, vars, data, ctrlPath) => {
+
+		if (!this.needUpdate(meta))
 			return
+
+		if (meta instanceof Array) {
+			for (let i = 0; i < meta.length; i++) {
+				let sub = meta[i]
+				let currentPath = path
+				if (!sub)
+					continue
+
+				if (sub['_power']) {
+					currentPath = `${path}.${sub.name}`
+					sub.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+					continue
+				}
+
+				let subType = typeof sub, isExpression = false, isMeta = false
+
+				if (subType == 'string' && utils.expression.isExpression(sub)) {
+					sub = this.execExpression(sub, data, path, rowIndex, vars, ctrlPath)
+					isExpression = true
+					if(sub && sub['_isMeta'] === true)
+						isMeta = true
+
+					if(sub && sub['_isMeta'] === true){
+						isMeta = true
+						meta[i] = sub.value
+					}
+					else {
+						meta[i] = sub
+					}
+				}
+
+				if (!this.needUpdate(sub))
+					continue
+				
+				if(isExpression && !isMeta){
+					continue
+				}
+
+				subType = typeof sub
+
+				if (sub instanceof Array) {
+					currentPath = `${path}.${i}`
+					sub.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+					this.updateMeta(sub, currentPath, rowIndex, vars, data, ctrlPath)
+					continue
+				}
+
+				if (sub.name && sub.component) {
+					currentPath = `${path}.${sub.name}`
+					sub.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+					this.updateMeta(sub, currentPath, rowIndex, vars, data, sub.path)
+				}
+				else {
+					currentPath = `${path}.${i}`
+					sub.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+					this.updateMeta(sub, currentPath, rowIndex, vars, data, ctrlPath)
+				}
+
+			}
+			return
+		}
 
 		var excludeProps = meta["_excludeProps"]
 		if (excludeProps && utils.expression.isExpression(excludeProps)) {
-			excludeProps = this.execExpression(excludeProps, meta, data, path, rowIndex, vars)
+			excludeProps = this.execExpression(excludeProps, data, path, rowIndex, vars, ctrlPath)
 		}
 
 		//去除meta的排除属性
@@ -121,47 +201,67 @@ class action {
 			})
 		}
 
-		Object.keys(meta).forEach(key => {
+		const keys = Object.keys(meta)
+
+		for (let key of keys) {
 			let v = meta[key],
 				t = typeof v,
 				currentPath = path
 
-			if (t == 'string' && utils.expression.isExpression(v)) {
-				const ret = this.execExpression(v, meta, data, currentPath, rowIndex, vars)
+			if (!v)
+				continue
 
-				if (key == '...' && ret && typeof ret == 'object') {
-					Object.keys(ret).forEach(kk => {
-						//meta[kk] = () => ret[kk]
-						meta[kk] = ret[kk]
+			if (v['_power']) {
+				currentPath = `${path}.${key}.${v.name}`
+				v.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+				continue
+			}
+			
+			let isExpression = false, isMeta = false
+			if (t == 'string' && utils.expression.isExpression(v)) {
+				v = this.execExpression(v, data, `${path}.${key}`, rowIndex, vars, ctrlPath)
+				isExpression = true
+				if (key == '...' && v && typeof v == 'object') {
+					Object.keys(v).forEach(kk => {
+						meta[kk] = v[kk]
 					})
 					delete meta['...']
 				} else {
-					//meta[key] = () => ret
-					meta[key] = ret
-				}
-			}
-			else if (v instanceof Array) {
-
-				v.forEach((c, index) => {
-					if (typeof c == 'string' && utils.expression.isExpression(c)) {
-						meta[key][index] = this.execExpression(c, meta, data, currentPath, rowIndex, vars)
+					if(v && v['_isMeta'] === true){
+						isMeta = true
+						meta[key] = v.value
 					}
 					else {
-						currentPath = path
-						if (c.name && c.component) {
-							currentPath = currentPath ? `${currentPath}.${key}.${c.name}` : `${key}.${c.name}`
-						}
-						this.updateMeta(c, currentPath, rowIndex, vars, data)
+						meta[key] = v
 					}
-				})
-			}
-			else if (t == 'object') {
-				if (v.name && v.component) {
-					currentPath = currentPath ? `${currentPath}.${key}.${v.name}` : `${key}.${v.name}`
 				}
-				this.updateMeta(meta[key], currentPath, rowIndex, vars, data)
 			}
-		})
+
+			t = typeof t
+
+			if (!this.needUpdate(v))
+				continue
+
+			if(isExpression && !isMeta){
+				continue
+			}
+
+			if (v instanceof Array) {
+				this.updateMeta(v, `${path}.${key}`, rowIndex, vars, data, ctrlPath)
+				continue
+			}
+
+			if (v.name && v.component) {
+				currentPath = `${path}.${key}.${v.name}`
+				v.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+				this.updateMeta(v, currentPath, rowIndex, vars, data, v.path)
+			}
+			else {
+				currentPath = `${path}.${key}`
+				v.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
+				this.updateMeta(v, currentPath, rowIndex, vars, data, ctrlPath)
+			}
+		}
 	}
 
 	getMeta = (fullPath, propertys, data) => {
@@ -170,12 +270,13 @@ class action {
 			path = parsedPath.path,
 			rowIndex = parsedPath.vars ? parsedPath.vars[0] : undefined,
 			vars = parsedPath.vars
-		
-		if(!data)
+
+		if (!data)
 			data = common.getField(this.injections.getState()).toJS()
 
 		meta['_power'] = undefined
-		this.updateMeta(meta, path, rowIndex, vars, data)
+		meta.path = fullPath
+		this.updateMeta(meta, path, rowIndex, vars, data, fullPath)
 		return meta
 	}
 
