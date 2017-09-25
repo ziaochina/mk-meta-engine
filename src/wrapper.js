@@ -26,11 +26,16 @@ export default function wrapper(option) {
 
 
 			render() {
-				if (this.props.notRender === true)
+				if (this.props.notRender === true || this.props._notRender === true)
 					return null
+
 				if (!WrappedComponent)
 					return null
+
 				if (!this.props.payload || !this.props.payload.get('data'))
+					return null
+
+				if( this.props.payload.getIn(['data','_notRender']) === true)
 					return null
 
 				return <WrappedComponent {...this.props} monkeyKing={monkeyKing} />

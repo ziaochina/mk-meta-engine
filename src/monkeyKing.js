@@ -22,10 +22,10 @@ function parseMetaProps(meta, props, data) {
             })
         }
         else if (t == 'object') {
-            if(v && v._notParse){
-                ret[key] = v    
+            if (v && v._notParse) {
+                ret[key] = v
             }
-            else{
+            else {
                 ret[key] = metaToComponent(v, props, data)
             }
         }
@@ -41,16 +41,18 @@ function parseMetaProps(meta, props, data) {
 }
 
 function metaToComponent(meta, props, data) {
-    if (!meta) {
+    if(!meta)
+        return meta
+
+    const metaType = typeof meta
+
+    if (metaType == 'object' && meta['$$typeof']) {
         return meta
     }
-    else if (typeof meta == 'object' && meta['$$typeof']) {
+    else if (metaType == 'object' && meta['_isAMomentObject']) {
         return meta
     }
-    else if (typeof meta == 'object' && meta['_isAMomentObject']) {
-        return meta
-    }
-    else if (typeof meta == 'object') {
+    else if (metaType == 'object') {
 
         if (meta.component) {
             if (typeof meta.component == 'function') {
@@ -75,15 +77,19 @@ function metaToComponent(meta, props, data) {
                 if (!items || items.size == 0) return
                 items = items.toJS()
                 return items.map((o, index) => {
-                    return metaToComponent({ ...props.gm(meta.path + ',' + index, undefined, data), _power: undefined }, props, data)
+                    let childMeta = props.gm(meta.path + ',' + index, undefined, data)
+                    delete childMeta._power 
+                    return metaToComponent(childMeta, props, data)
                 })
             }
 
             if (meta['_power'] && meta['_power'].indexOf('=>') != -1) {
                 return (...args) => {
                     let varsString = (new Function('return ' + meta['_power']))()(...args)
-                    const co = metaToComponent({ ...props.gm(meta.path + ',' + varsString, undefined, data), _power: undefined }, props, data)
-                    return co ? React.cloneElement(co, { path: meta.path + ',' + varsString }) : co
+                    let childMeta = props.gm(meta.path + ',' + varsString, undefined, data)
+                    delete childMeta._power 
+                    return metaToComponent(childMeta, props, data)
+                    //return co ? React.cloneElement(co, { path: meta.path + ',' + varsString }) : co
                 }
             }
 
@@ -94,22 +100,25 @@ function metaToComponent(meta, props, data) {
                 key: meta.path,
                 ...props,
                 ...parseMetaProps(meta, props, data),
-
             }
 
-            allProps = omit(allProps, ['clearAppState', 'component', 'name', 'getDirectFuns', 'initView', 'payload'])
+            //删除一些组件不需要的属性
+            delete allProps.clearAppState
+            delete allProps.component
+            delete allProps.name
+            delete allProps.getDirectFuns
+            delete allProps.initView
+            delete allProps.payload
+
+            //使用omit性能较低
+            //allProps = omit(allProps, ['clearAppState', 'component', 'name', 'getDirectFuns', 'initView', 'payload'])
 
             if (componentName == 'AppLoader') {
                 if (!allProps.appName)
                     return null
                 return React.createElement(component, { ...allProps, name: allProps.appName })
             }
-            //else if (typeof component == 'string' || component.prototype.isReactComponent) {
             return React.createElement(component, allProps)
-            //}
-            //else {
-            //    return component(allProps)
-            //}
         }
         else {
             return parseMetaProps(meta, props, data)
