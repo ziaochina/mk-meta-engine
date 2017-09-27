@@ -118,6 +118,14 @@ function metaToComponent(meta, props, data) {
                     return null
                 return React.createElement(component, { ...allProps, name: allProps.appName })
             }
+
+            delete allProps.store
+            delete allProps.appName
+            delete allProps.appFullName
+            delete allProps.appQuery
+            delete allProps.appParams
+            delete allProps.storeSubscription
+
             return React.createElement(component, allProps)
         }
         else {
