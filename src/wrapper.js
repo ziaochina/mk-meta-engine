@@ -9,16 +9,25 @@ export default function wrapper(option) {
 		return class internal extends Component {
 
 			constructor(props) {
-   	 			super(props)
-    			this.state = { hasError: false }
-  			}
+				super(props)
+				this.state = { hasError: false }
+			}
+
+			componentWillMount() {
+				this.props.componentWillMount && this.props.componentWillMount()
+			}
 
 			componentDidMount() {
-				this.props.initView(this)
+				this.props.initView && this.props.initView(this) //兼容以前版本
+				this.props.componentDidMount && this.props.componentDidMount()
 			}
 
 			shouldComponentUpdate(nextProps, nextState) {
-				if(nextState.hasError != this.state.hasError){
+				if (this.props.shouldComponentUpdate
+					&& this.props.shouldComponentUpdate(nextProps, nextState) === true)
+					return true
+
+				if (nextState.hasError != this.state.hasError) {
 					return true
 				}
 
@@ -30,34 +39,46 @@ export default function wrapper(option) {
 				return false
 			}
 
-			
-			componentWillReceiveProps(nextProps){
-				if(this.state.hasError){
-					this.setState({ hasError: false, error:undefined })
+
+			componentWillReceiveProps(nextProps) {
+				if (this.state.hasError) {
+					this.setState({ hasError: false, error: undefined })
 				}
 
-				if(nextProps.componentWillReceiveProps){
-					nextProps.componentWillReceiveProps(nextProps)
-				}
+				this.props.componentWillReceiveProps
+					&& this.props.componentWillReceiveProps(nextProps)
+			}
+
+			componentWillUpdate(nextProps, nextState) {
+				this.props.componentWillUpdate
+					&& this.props.componentWillUpdate(nextProps, nextState)
 			}
 
 			componentDidCatch(error, info) {
 				utils.exception.error(error)
 				this.setState({ hasError: true, error })
-				return true
-  			}
 
-
-			componentWillUnmount() {
-				this.props.unmount()
+				this.props.componentDidCatch
+					&& this.props.componentDidCatch(error, info)
 			}
 
 
+			componentWillUnmount() {
+				this.props.unmount && this.props.unmount() //兼容以前版本
+				this.props.componentWillUnmount
+					&& this.props.componentWillUnmount()
+			}
+
+			componentDidUpdate() {
+				this.props.componentDidUpdate
+					&& this.props.componentDidUpdate()
+			}
+
 			render() {
 				if (this.state.hasError) {
-					return <div style={{color:'red'}}>{this.state.error}</div>
+					return <div style={{ color: 'red' }}>{this.state.error}</div>
 				}
-				
+
 				if (this.props.notRender === true || this.props._notRender === true)
 					return null
 
@@ -67,7 +88,7 @@ export default function wrapper(option) {
 				if (!this.props.payload || !this.props.payload.get('data'))
 					return null
 
-				if( this.props.payload.getIn(['data','_notRender']) === true)
+				if (this.props.payload.getIn(['data', '_notRender']) === true)
 					return null
 
 				return <WrappedComponent {...this.props} monkeyKing={monkeyKing} />
