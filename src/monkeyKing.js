@@ -41,7 +41,7 @@ function parseMetaProps(meta, props, data) {
 }
 
 function metaToComponent(meta, props, data) {
-    if(!meta)
+    if (!meta)
         return meta
 
     const metaType = typeof meta
@@ -78,7 +78,7 @@ function metaToComponent(meta, props, data) {
                 items = items.toJS()
                 return items.map((o, index) => {
                     let childMeta = props.gm(meta.path + ',' + index, undefined, data)
-                    delete childMeta._power 
+                    delete childMeta._power
                     return metaToComponent(childMeta, props, data)
                 })
             }
@@ -87,7 +87,7 @@ function metaToComponent(meta, props, data) {
                 return (...args) => {
                     let varsString = (new Function('return ' + meta['_power']))()(...args)
                     let childMeta = props.gm(meta.path + ',' + varsString, undefined, data)
-                    delete childMeta._power 
+                    delete childMeta._power
                     return metaToComponent(childMeta, props, data)
                     //return co ? React.cloneElement(co, { path: meta.path + ',' + varsString }) : co
                 }
@@ -125,7 +125,7 @@ function metaToComponent(meta, props, data) {
             if (componentName == 'AppLoader') {
                 if (!allProps.appName)
                     return null
-                return React.createElement(component, { ...allProps, name: allProps.appName })
+                return React.createElement(component, { ...allProps, key: allProps.appName, name: allProps.appName })
             }
 
             delete allProps.store
