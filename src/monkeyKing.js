@@ -109,6 +109,15 @@ function metaToComponent(meta, props, data) {
             delete allProps.getDirectFuns
             delete allProps.initView
             delete allProps.payload
+            delete allProps.componentWillMount
+            delete allProps.componentDidMount
+            delete allProps.shouldComponentUpdate
+            delete allProps.componentWillReceiveProps
+            delete allProps.componentWillUpdate
+            delete allProps.componentDidCatch
+            delete allProps.componentWillUnmount
+            delete allProps.componentDidUpdate
+            delete allProps.unmount
 
             //使用omit性能较低
             //allProps = omit(allProps, ['clearAppState', 'component', 'name', 'getDirectFuns', 'initView', 'payload'])

@@ -39,6 +39,62 @@ class action {
 		delete appInstances[this.component.appFullName]
 	}
 
+	componentWillMount = () => {
+		this.metaHandlers
+			&& this.metaHandlers['componentWillMount']
+			&& this.metaHandlers['componentWillMount'] != this.componentWillMount
+			&& this.metaHandlers['componentWillMount']()
+	}
+
+	componentDidMount = () => {
+		this.metaHandlers
+			&& this.metaHandlers['componentDidMount']
+			&& this.metaHandlers['componentDidMount'] != this.componentDidMount
+			&& this.metaHandlers['componentDidMount']()
+	}
+
+	shouldComponentUpdate = (nextProps, nextState) => {
+		this.metaHandlers
+			&& this.metaHandlers['shouldComponentUpdate']
+			&& this.metaHandlers['shouldComponentUpdate'] != this.shouldComponentUpdate
+			&& this.metaHandlers['shouldComponentUpdate'](nextProps, nextState)
+	}
+
+	componentWillReceiveProps = (nextProps) => {
+		this.metaHandlers
+			&& this.metaHandlers['componentWillReceiveProps']
+			&& this.metaHandlers['componentWillReceiveProps'] != this.componentWillReceiveProps
+			&& this.metaHandlers['componentWillReceiveProps'](nextProps)
+	}
+
+	componentWillUpdate = (nextProps, nextState) => {
+		this.metaHandlers
+			&& this.metaHandlers['componentWillUpdate']
+			&& this.metaHandlers['componentWillUpdate'] != this.componentWillUpdate
+			&& this.metaHandlers['componentWillUpdate'](nextProps, nextState)
+	}
+
+	componentDidCatch = (error, info) => {
+		this.metaHandlers
+			&& this.metaHandlers['componentDidCatch']
+			&& this.metaHandlers['componentDidCatch'] != this.componentDidCatch
+			&& this.metaHandlers['componentDidCatch'](error, info)
+	}
+
+	componentWillUnmount = () => {
+		this.metaHandlers
+			&& this.metaHandlers['componentWillUnmount']
+			&& this.metaHandlers['componentWillUnmount'] != this.componentWillUnmount
+			&& this.metaHandlers['componentWillUnmount']()
+	}
+
+	componentDidUpdate = () => {
+		this.metaHandlers
+			&& this.metaHandlers['componentDidUpdate']
+			&& this.metaHandlers['componentDidUpdate'] != this.componentDidUpdate
+			&& this.metaHandlers['componentDidUpdate']()
+	}
+
 	getAppInstances = () => {
 		return appInstances
 	}
@@ -145,10 +201,10 @@ class action {
 				if (subType == 'string' && utils.expression.isExpression(sub)) {
 					sub = this.execExpression(sub, data, path, rowIndex, vars, ctrlPath)
 					isExpression = true
-					if(sub && sub['_isMeta'] === true)
+					if (sub && sub['_isMeta'] === true)
 						isMeta = true
 
-					if(sub && sub['_isMeta'] === true){
+					if (sub && sub['_isMeta'] === true) {
 						isMeta = true
 						meta[i] = sub.value
 					}
@@ -159,8 +215,8 @@ class action {
 
 				if (!this.needUpdate(sub))
 					continue
-				
-				if(isExpression && !isMeta){
+
+				if (isExpression && !isMeta) {
 					continue
 				}
 
@@ -216,7 +272,7 @@ class action {
 				v.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
 				continue
 			}
-			
+
 			let isExpression = false, isMeta = false
 			if (t == 'string' && utils.expression.isExpression(v)) {
 				v = this.execExpression(v, data, `${path}.${key}`, rowIndex, vars, ctrlPath)
@@ -227,7 +283,7 @@ class action {
 					})
 					delete meta['...']
 				} else {
-					if(v && v['_isMeta'] === true){
+					if (v && v['_isMeta'] === true) {
 						isMeta = true
 						meta[key] = v.value
 					}
@@ -242,7 +298,7 @@ class action {
 			if (!this.needUpdate(v))
 				continue
 
-			if(isExpression && !isMeta){
+			if (isExpression && !isMeta) {
 				continue
 			}
 
