@@ -46,7 +46,7 @@ $ npm start
 | config    | 配置函数，使用mk命令初始化的应该默认已经调用   | function |
 | getField | 获取state中某个字段值，参数为(fieldPath)，如data.form.user   | function | 
 | gf | gf === getField, 简写  | function | 
-| setField | 获取state中某个字段值，参数为(fieldPath,value) | function |
+| setField | 设置state中某个字段值，参数为(fieldPath,value) | function |
 | sf | sf === setField, 简写 | function |
 | getMeta | 获取元数据，参数为(path,propertys), path:如root.form.user, propertys:如['style'] | function |
 | gm | gm === getMeta, 简写 | function |
