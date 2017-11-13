@@ -12,7 +12,20 @@
     "type": "git",
     "url": "git+https://github.com/ziaochina/mk-meta-engine.git"
   },
-  "author": "",
+  "keywords": [
+    "react",
+    "reactjs",
+    "flux",
+    "redux",
+    "react-redux",
+    "antd",
+    "immutable",
+    "mk",
+    "mongkey king",
+    "whatsmk",
+    "mk-js"
+  ],
+  "author": "Liujian Zhang <ziaochina@gmail.com> (http://github.com/ziaochina)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ziaochina/mk-meta-engine/issues"
