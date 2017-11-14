@@ -6,8 +6,8 @@
   "scripts": {
     "compile": "babel -d lib/ src/",
     "commit": "git add . && git commit -m 'zlj' &&  git push -u origin master",
-    "build": "cross-env NODE_ENV=production && webpack --output-filename mk-meta-engine.js",
-    "build-min": "export NODE_ENV=production COMPRESS=1 && webpack --output-filename mk-meta-engine.min.js",
+    "build": "webpack --output-filename mk-meta-engine.js",
+    "build-min": "cross-env NODE_ENV=production COMPRESS=1 webpack --output-filename mk-meta-engine.min.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
