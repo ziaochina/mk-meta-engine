@@ -1,5 +1,5 @@
 import React from 'react'
-import { AppLoader } from 'mk-app-loader'
+import { AppLoader, getApps } from 'mk-app-loader'
 import componentFactory from './componentFactory'
 import omit from 'omit.js'
 import config from './config'
@@ -125,6 +125,10 @@ function metaToComponent(meta, props, data) {
             if (componentName == 'AppLoader') {
                 if (!allProps.appName)
                     return null
+
+                if(allProps['_notRender'] === true && !getApps()[allProps.appName]){
+                    return null
+                }
                 return React.createElement(component, { ...allProps, key: allProps.appName, name: allProps.appName })
             }
 

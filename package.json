@@ -1,6 +1,6 @@
 {
   "name": "mk-meta-engine",
-  "version": "1.0.61",
+  "version": "1.0.62",
   "description": "",
   "main": "./lib/index.js",
   "scripts": {
