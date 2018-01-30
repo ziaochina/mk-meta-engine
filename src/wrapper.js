@@ -76,7 +76,7 @@ export default function wrapper(option) {
 
 			render() {
 				if (this.state.hasError) {
-					return <div style={{ color: 'red' }}>{this.state.error}</div>
+					return <div style={{ color: 'red' }}>{this.state.error && this.state.error.message }</div>
 				}
 
 				if (this.props.notRender === true || this.props._notRender === true)

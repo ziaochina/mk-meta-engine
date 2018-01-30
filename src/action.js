@@ -150,6 +150,11 @@ class action {
 			return f.apply(this, values)
 		}
 		catch (e) {
+			this.metaHandlers
+				&& this.metaHandlers['componentDidCatch']
+				&& this.metaHandlers['componentDidCatch'] != this.componentDidCatch
+				&& this.metaHandlers['componentDidCatch'](error, info)
+				
 			utils.exception.error(e)
 		}
 	}
