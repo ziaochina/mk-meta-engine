@@ -153,8 +153,8 @@ class action {
 			this.metaHandlers
 				&& this.metaHandlers['componentDidCatch']
 				&& this.metaHandlers['componentDidCatch'] != this.componentDidCatch
-				&& this.metaHandlers['componentDidCatch'](error, info)
-				
+				&& this.metaHandlers['componentDidCatch'](e)
+
 			utils.exception.error(e)
 		}
 	}
