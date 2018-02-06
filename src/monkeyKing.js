@@ -64,6 +64,7 @@ function metaToComponent(meta, props, data) {
             if (typeof meta['_visible'] === 'function' && meta['_visible']() === false)
                 return null
 
+            //for in data.list
             if (meta['_power'] && /for[ ]+in/.test(meta['_power'])) {
                 var p = meta['_power']
                     .replace(/for[ ]+in/, '')
@@ -83,6 +84,7 @@ function metaToComponent(meta, props, data) {
                 })
             }
 
+            //({rowIndex})=>rowIndex
             if (meta['_power'] && meta['_power'].indexOf('=>') != -1) {
                 return (...args) => {
                     let varsString = (new Function('return ' + meta['_power']))()(...args)
