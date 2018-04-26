@@ -1,5 +1,6 @@
 import Immutable, { Map, List, fromJS } from 'immutable'
 import utils, { path } from 'mk-utils'
+import templateFactory from './templateFactory'
 
 const { existsParamsInPath, parsePath } = path
 
@@ -26,6 +27,8 @@ export function setMetaForce(appName, meta) {
 
     meta = fromJS(meta)
 
+    meta = parseMetaTemplate(meta)
+    
     cache.meta = cache.meta
         .setIn([appName, 'meta'], meta)
         .setIn([appName, 'metaMap'], parseMeta(meta))
@@ -113,6 +116,42 @@ export function updateField(state, fieldPath, fn) {
 
 function isComponent(meta) {
     return typeof meta == 'object' && !!meta.name && !!meta.component
+}
+
+function parseMetaTemplate(meta) {
+    var templates = []
+    
+    const parseProp = (propValue, path) => {
+        if (!(propValue instanceof Immutable.Map)) {
+            return
+        }
+        if (propValue.get('component')) {
+            var component = utils.string.trim(propValue.get('component'))
+            if(component.substring(0, 2) == '##'){
+                var template = templateFactory.getTemplate(component.substr(2))
+                if(template){
+                    templates.push([path, fromJS(template(propValue.toJS()))])
+                    return 
+                }
+            }
+        }
+
+        propValue.keySeq().toArray().forEach(p => {
+            let v = propValue.get(p)
+            if (v instanceof Immutable.List) {
+                v.forEach((c, index) => {
+                    let currentPath = path ? `${path}.${p}.${index}` : `${p}.${index}`
+                    parseProp(c, currentPath)
+                })
+            } else {
+                let currentPath = path ? `${path}.${p}` : p
+                parseProp(v, currentPath)
+            }
+        })
+    }
+    parseProp(meta, '')
+    templates.forEach(t => meta = meta.setIn(t[0].split('.'), t[1] ))
+    return meta
 }
 
 function parseMeta(meta) {

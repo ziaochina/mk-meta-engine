@@ -62,6 +62,7 @@ class componentFactory {
         }
 
         if (!component) {
+            debugger
             throw `没有组件. name: ${name}`
         }
 

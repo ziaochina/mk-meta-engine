@@ -4,6 +4,7 @@ import action from './action'
 import reducer from './reducer'
 import wrapper from './wrapper'
 import componentFactory from './componentFactory'
+import templateFactory from './templateFactory'
 //import tryCatchError from './reactTryCatchBatchingStrategy'
 
 export default {
@@ -13,5 +14,6 @@ export default {
 	reducer,
 	wrapper,
 	componentFactory,
+	templateFactory,
 	AppLoader
 }
