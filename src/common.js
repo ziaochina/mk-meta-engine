@@ -150,7 +150,27 @@ function parseMetaTemplate(meta) {
         })
     }
     parseProp(meta, '')
-    templates.forEach(t => meta = meta.setIn(t[0].split('.'), t[1] ))
+    templates.forEach(t => {
+        let seg = t[0].split('.')
+        if (
+            (t[1] instanceof Immutable.List) && 
+            (meta.getIn(seg.slice(0, seg.length-1)) instanceof Immutable.List )
+        ) {
+            let index = seg.pop()
+            meta = meta.updateIn(seg, ll=>{
+                ll = ll.remove(index)
+
+                t[1].forEach(o=>{
+                    ll = ll.insert(index, o)
+                    index++
+                })
+                return ll
+            })
+        }
+        else{
+            meta = meta.setIn(seg, t[1] )
+        }
+    })
     return meta
 }
 

@@ -1378,7 +1378,21 @@ function parseMetaTemplate(meta) {
     };
     parseProp(meta, '');
     templates.forEach(function (t) {
-        return meta = meta.setIn(t[0].split('.'), t[1]);
+        var seg = t[0].split('.');
+        if (t[1] instanceof _immutable2.default.List && meta.getIn(seg.slice(0, seg.length - 1)) instanceof _immutable2.default.List) {
+            var index = seg.pop();
+            meta = meta.updateIn(seg, function (ll) {
+                ll = ll.remove(index);
+
+                t[1].forEach(function (o) {
+                    ll = ll.insert(index, o);
+                    index++;
+                });
+                return ll;
+            });
+        } else {
+            meta = meta.setIn(seg, t[1]);
+        }
     });
     return meta;
 }
