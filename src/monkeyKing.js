@@ -52,6 +52,9 @@ function metaToComponent(meta, props, data) {
     else if (metaType == 'object' && meta['_isAMomentObject']) {
         return meta
     }
+    else if (metaType == 'object' && meta instanceof Date) {
+        return meta
+    }
     else if (metaType == 'object') {
 
         if (meta.component) {
