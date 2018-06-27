@@ -14,11 +14,16 @@ function parseMetaProps(meta, props, data) {
         if (v instanceof Array) {
             ret[key] = []
             v.forEach(c => {
-                let mc = metaToComponent(c, props, data)
-                if (mc instanceof Array)
-                    ret[key] = ret[key].concat(mc)
-                else
-                    ret[key].push(mc)
+                if(c instanceof Array){
+                    ret[key] = v
+                }
+                else{
+                    let mc = metaToComponent(c, props, data)
+                    if (mc instanceof Array)
+                        ret[key] = ret[key].concat(mc)
+                    else
+                        ret[key].push(mc)
+                }
             })
         }
         else if (t == 'object') {
