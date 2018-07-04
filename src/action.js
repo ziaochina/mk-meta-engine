@@ -32,7 +32,7 @@ class action {
 			instance: component
 		}
 
-		this.metaHandlers && this.metaHandlers['onInit'] && this.metaHandlers['onInit']({ component, injections })
+		this.metaHandlers && this.metaHandlers.onInit && this.metaHandlers.onInit({ component, injections })
 	}
 
 	unmount = () => {
@@ -231,10 +231,10 @@ class action {
 				if (subType == 'string' && utils.expression.isExpression(sub)) {
 					sub = this.execExpression(sub, data, path, rowIndex, vars, ctrlPath)
 					isExpression = true
-					if (sub && sub['_isMeta'] === true)
+					if (sub && sub._isMeta === true)
 						isMeta = true
 
-					if (sub && sub['_isMeta'] === true) {
+					if (sub && sub._isMeta === true) {
 						isMeta = true
 						meta[i] = sub.value
 					}
@@ -274,7 +274,7 @@ class action {
 			return
 		}
 
-		var excludeProps = meta["_excludeProps"]
+		var excludeProps = meta._excludeProps
 		if (excludeProps && utils.expression.isExpression(excludeProps)) {
 			excludeProps = this.execExpression(excludeProps, data, path, rowIndex, vars, ctrlPath)
 		}
@@ -323,7 +323,7 @@ class action {
 					})
 					delete meta['...']
 				} else {
-					if (v && v['_isMeta'] === true) {
+					if (v && v._isMeta === true) {
 						isMeta = true
 						meta[key] = v.value
 					}

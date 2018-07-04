@@ -1987,7 +1987,7 @@ var _initialiseProps = function _initialiseProps() {
 			instance: component
 		};
 
-		_this.metaHandlers && _this.metaHandlers['onInit'] && _this.metaHandlers['onInit']({ component: component, injections: injections });
+		_this.metaHandlers && _this.metaHandlers.onInit && _this.metaHandlers.onInit({ component: component, injections: injections });
 	};
 
 	this.unmount = function () {
@@ -2153,9 +2153,9 @@ var _initialiseProps = function _initialiseProps() {
 				if (subType == 'string' && _mkUtils2.default.expression.isExpression(sub)) {
 					sub = _this.execExpression(sub, data, path, rowIndex, vars, ctrlPath);
 					isExpression = true;
-					if (sub && sub['_isMeta'] === true) isMeta = true;
+					if (sub && sub._isMeta === true) isMeta = true;
 
-					if (sub && sub['_isMeta'] === true) {
+					if (sub && sub._isMeta === true) {
 						isMeta = true;
 						meta[_i] = sub.value;
 					} else {
@@ -2191,7 +2191,7 @@ var _initialiseProps = function _initialiseProps() {
 			return;
 		}
 
-		var excludeProps = meta["_excludeProps"];
+		var excludeProps = meta._excludeProps;
 		if (excludeProps && _mkUtils2.default.expression.isExpression(excludeProps)) {
 			excludeProps = _this.execExpression(excludeProps, data, path, rowIndex, vars, ctrlPath);
 		}
@@ -2241,7 +2241,7 @@ var _initialiseProps = function _initialiseProps() {
 					});
 					delete meta['...'];
 				} else {
-					if (v && v['_isMeta'] === true) {
+					if (v && v._isMeta === true) {
 						isMeta = true;
 						meta[key] = v.value;
 					} else {
