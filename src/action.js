@@ -139,23 +139,48 @@ class action {
 	}
 
 	execExpression = (expressContent, data, path, rowIndex, vars, ctrlPath) => {
-		let f = this.parseExpreesion(expressContent)
-		let values = [data]
+		var values = [data]
+
+		var metaHandlerKeys = Object.keys(this.metaHandlers),
+			i, key
+
+		var fun = (n, option) => {
+			return (...args)=>{
+				return this.metaHandlers[n](...args, option)
+			}
+		}
+
+		for (i = 0; key = metaHandlerKeys[i++];) {
+			values.push(fun(key, {
+				currentPath: path, rowIndex, vars, lastIndex: vars && vars[vars.length - 1]
+			}))
+		}
+
+		/*
 
 		Object.keys(this.metaHandlers).forEach(k => {
-			values.push((...args) => this.metaHandlers[k](...args, { currentPath: path, rowIndex, vars, lastIndex: vars && vars[vars.length-1] }))
+			values.push((...args) => this.metaHandlers[k](...args, { currentPath: path, rowIndex, vars, lastIndex: vars && vars[vars.length - 1] }))
 		})
-		values = values.concat([path, rowIndex, vars, ctrlPath, vars && vars[vars.length-1] ])
+		*/
+		values.push(path)
+		values.push(rowIndex)
+		values.push(vars)
+		values.push(ctrlPath)
+		values.push(vars && vars[vars.length - 1])
+		//values = values.concat([path, rowIndex, vars, ctrlPath, vars && vars[vars.length-1] ])
 		try {
-			return f.apply(this, values)
+			return this.parseExpreesion(expressContent).apply(this, values)
 		}
 		catch (e) {
 			this.metaHandlers
-				&& this.metaHandlers['componentDidCatch']
-				&& this.metaHandlers['componentDidCatch'] != this.componentDidCatch
-				&& this.metaHandlers['componentDidCatch'](e)
-			console.error(`表达式解析错误：${expressContent}`)
-			utils.exception.error(e)
+				&& this.metaHandlers.componentDidCatch
+				&& this.metaHandlers.componentDidCatch != this.componentDidCatch
+				&& this.metaHandlers.componentDidCatch(e)
+			setTimeout(() => {
+				console.error(`表达式解析错误：${expressContent}`)
+				utils.exception.error(e)
+			}, 500)
+
 		}
 	}
 
@@ -172,15 +197,15 @@ class action {
 		if (t != 'object')
 			return false
 
-		if (meta["_notParse"] === true) {
+		if (meta._notParse === true) {
 			return false
 		}
 
 		return !(t != 'object'
 			|| !!meta['$$typeof']
-			|| !!meta['_isAMomentObject']
-			|| !!meta["_power"]
-			|| meta["_visible"] === false)
+			|| !!meta._isAMomentObject
+			|| !!meta._power
+			|| meta._visible === false)
 	}
 
 	updateMeta = (meta, path, rowIndex, vars, data, ctrlPath) => {
@@ -195,7 +220,7 @@ class action {
 				if (!sub)
 					continue
 
-				if (sub['_power']) {
+				if (sub._power) {
 					currentPath = `${path}.${sub.name}`
 					sub.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
 					continue
@@ -256,15 +281,25 @@ class action {
 
 		//去除meta的排除属性
 		if (excludeProps && excludeProps instanceof Array) {
+
+			var excludePropsKeys = Object.keys(excludeProps),
+				i, excludePropsKey
+
+			for (i = 0; excludePropsKey = excludePropsKeys[i++];) {
+				if (meta[excludePropsKey])
+					delete meta[excludePropsKey]
+			}
+			/*
 			excludeProps.forEach(k => {
 				if (meta[k])
 					delete meta[k]
-			})
+			})*/
 		}
 
-		const keys = Object.keys(meta)
+		var keys = Object.keys(meta),
+			j, key
 
-		for (let key of keys) {
+		for (j = 0; key = keys[j++];) {
 			let v = meta[key],
 				t = typeof v,
 				currentPath = path
@@ -272,7 +307,7 @@ class action {
 			if (!v)
 				continue
 
-			if (v['_power']) {
+			if (v._power) {
 				currentPath = `${path}.${key}.${v.name}`
 				v.path = vars ? `${currentPath}, ${vars.join(',')}` : currentPath
 				continue
@@ -335,7 +370,7 @@ class action {
 		if (!data)
 			data = common.getField(this.injections.getState()).toJS()
 
-		meta['_power'] = undefined
+		meta._power = undefined
 		meta.path = fullPath
 		this.updateMeta(meta, path, rowIndex, vars, data, fullPath)
 		return meta

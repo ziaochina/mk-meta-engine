@@ -3,6 +3,7 @@ import { AppLoader, getApps } from 'mk-app-loader'
 import componentFactory from './componentFactory'
 import omit from 'omit.js'
 import config from './config'
+import utils from 'mk-utils'
 
 function parseMetaProps(meta, props, data) {
     const ret = {}
@@ -13,18 +14,22 @@ function parseMetaProps(meta, props, data) {
 
         if (v instanceof Array) {
             ret[key] = []
-            v.forEach(c => {
-                if(c instanceof Array){
+
+            var i, c;
+
+            for (i = 0; c = v[i++];) {
+            //v.forEach(c => {
+                if (c instanceof Array) {
                     ret[key] = v
                 }
-                else{
+                else {
                     let mc = metaToComponent(c, props, data)
                     if (mc instanceof Array)
                         ret[key] = ret[key].concat(mc)
                     else
                         ret[key].push(mc)
                 }
-            })
+            }
         }
         else if (t == 'object') {
             if (v && v._notParse) {
@@ -45,6 +50,10 @@ function parseMetaProps(meta, props, data) {
     return ret
 }
 
+const toFunction = utils._.memoize((v) => {
+    return new Function(v)
+})
+
 function metaToComponent(meta, props, data) {
     if (!meta)
         return meta
@@ -61,20 +70,19 @@ function metaToComponent(meta, props, data) {
         return meta
     }
     else if (metaType == 'object') {
-
         if (meta.component) {
             if (typeof meta.component == 'function') {
                 meta.component = meta.component()
             }
-            if (meta['_visible'] === false)
+            if (meta._visible === false)
                 return null
 
-            if (typeof meta['_visible'] === 'function' && meta['_visible']() === false)
+            if (typeof meta._visible === 'function' && meta._visible() === false)
                 return null
 
             //for in data.list
-            if (meta['_power'] && /for[ ]+in/.test(meta['_power'])) {
-                var p = meta['_power']
+            if (meta['_power'] && /for[ ]+in/.test(meta._power)) {
+                var p = meta._power
                     .replace(/for[ ]+in/, '')
                     .replace(' ', '')
 
@@ -93,11 +101,11 @@ function metaToComponent(meta, props, data) {
             }
 
             //({rowIndex})=>rowIndex
-            if (meta['_power'] && meta['_power'].indexOf('=>') != -1) {
+            if (meta._power && meta._power.indexOf('=>') != -1) {
                 return (...args) => {
-                    let varsString = (new Function('return ' + meta['_power']))()(...args)
-                    let childMeta = props.gm(meta.path + ',' + varsString, undefined, data)
-                    delete childMeta._power
+                    var varsString = (toFunction('return ' + meta['_power']))()(...args)
+                    var childMeta = props.gm(meta.path + ',' + varsString, undefined, data)
+                    childMeta._power = undefined
                     return metaToComponent(childMeta, props, data)
                     //return co ? React.cloneElement(co, { path: meta.path + ',' + varsString }) : co
                 }
@@ -106,48 +114,79 @@ function metaToComponent(meta, props, data) {
             const componentName = meta.component,
                 component = componentFactory.getComponent(props.appName, componentName)
 
+            /*
             var allProps = {
                 key: meta.path,
                 ...props,
                 ...parseMetaProps(meta, props, data),
+            }*/
+
+            var allProps = parseMetaProps(meta, props, data)
+            if (!allProps.key) {
+                allProps.key = meta.path
             }
 
-            //删除一些组件不需要的属性
-            delete allProps.clearAppState
+
+
+            /*
+             var metaProps = parseMetaProps(meta, props, data)
+
+            var metaPropsKeys = Object.keys(metaProps)
+            for (var i = 0; i < metaPropsKeys.length; i++) {
+                allProps[metaPropsKeys[i]] = metaProps[metaPropsKeys[i]]
+            }*/
+
             delete allProps.component
             delete allProps.name
-            delete allProps.getDirectFuns
-            delete allProps.initView
-            delete allProps.payload
-            delete allProps.componentWillMount
-            delete allProps.componentDidMount
-            delete allProps.shouldComponentUpdate
-            delete allProps.componentWillReceiveProps
-            delete allProps.componentWillUpdate
-            delete allProps.componentDidCatch
-            delete allProps.componentWillUnmount
-            delete allProps.componentDidUpdate
-            delete allProps.unmount
 
             //使用omit性能较低
             //allProps = omit(allProps, ['clearAppState', 'component', 'name', 'getDirectFuns', 'initView', 'payload'])
 
             if (componentName == 'AppLoader') {
+
+                var propKeys = Object.keys(props),
+                    i, key
+
+                for (i = 0; key = propKeys[i++];) {
+                    if (allProps[key] == undefined) {
+                        allProps[key] = props[key]
+                    }
+                }
+
+                //删除一些组件不需要的属性
+                delete allProps.clearAppState
+                delete allProps.getDirectFuns
+                delete allProps.initView
+                delete allProps.payload
+                delete allProps.componentWillMount
+                delete allProps.componentDidMount
+                delete allProps.shouldComponentUpdate
+                delete allProps.componentWillReceiveProps
+                delete allProps.componentWillUpdate
+                delete allProps.componentDidCatch
+                delete allProps.componentWillUnmount
+                delete allProps.componentDidUpdate
+                delete allProps.unmount
+
                 if (!allProps.appName)
                     return null
 
-                if(allProps['_notRender'] === true && !getApps()[allProps.appName]){
+                if (allProps._notRender === true && !getApps()[allProps.appName]) {
                     return null
                 }
-                return React.createElement(component, { ...allProps, key: allProps.appName, name: allProps.appName })
+                allProps.key = allProps.appName
+                allProps.name = allProps.appName
+                return React.createElement(component, allProps)
             }
 
+            /*
             delete allProps.store
             delete allProps.appName
             delete allProps.appFullName
             delete allProps.appQuery
             delete allProps.appParams
             delete allProps.storeSubscription
+            */
 
             return React.createElement(component, allProps)
         }

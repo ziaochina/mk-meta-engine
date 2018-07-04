@@ -56,11 +56,19 @@ export function getMeta(appInfo, fullpath, propertys) {
 
     //属性为数组，遍历获取
     if (propertys instanceof Array) {
+        var i, p;
+
+        for (i = 0; p = propertys[i++];) {
+            var val = currentMeta.getIn(p.split('.'))
+            ret[p] = (val && val.toJS) ? val.toJS() : val
+        }
+
+        /*
         propertys.forEach(p => {
             let val = currentMeta.getIn(p.split('.'))
             //immutable值，直接toJS()
             ret[p] = (val && val.toJS) ? val.toJS() : val
-        })
+        })*/
 
         return ret
     }
@@ -99,10 +107,12 @@ export function setField(state, fieldPath, value) {
 }
 
 export function setFields(state, values) {
-    Object.keys(values).forEach(k => {
-        state = setField(state, k, values[k])
-    })
+    var keys = Object.keys(values),
+        i, key
 
+    for (i = 0; key = keys[i++];) {
+        state = setField(state, key, values[key])
+    }
     return state
 }
 
