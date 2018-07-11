@@ -1,26 +1,22 @@
-var webpack = require("webpack");
-var path = require("path");
-var env = process.env.NODE_ENV
-var compress = process.env.COMPRESS
+const webpack = require("webpack"),
+    path = require("path"),
+    env = process.env.NODE_ENV
 
-var plugins = []
-
-plugins.push(new webpack.DefinePlugin({
-    "process.env.NODE_ENV": JSON.stringify(env)
-}))
-
-if (env === 'production' && compress) {
-    plugins.push(
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: {
-                warnings: false
-            }
-        })
-    )
-}
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 
 module.exports = {
+    mode: env || 'development',
+    optimization: {
+        minimizer: env === 'production' ? [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: false
+            })
+        ] : []
+    },
+    devtool: env === 'production' ? undefined : 'source-map',
     entry: ["./src/index.js"],
 
     output: {
@@ -47,11 +43,6 @@ module.exports = {
             exclude: /node_modules/,
             use: 'babel-loader'
         }]
-    },
-
-    plugins: plugins
+    }
 }
 
-if (env === 'development') {
-    module.exports.devtool = 'source-map'
-}
