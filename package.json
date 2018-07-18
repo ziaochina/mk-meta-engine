@@ -1,6 +1,6 @@
 {
   "name": "mk-meta-engine",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "",
   "main": "./lib/index.js",
   "scripts": {
@@ -46,12 +46,12 @@
     "babel-core": "*",
     "babel-loader": "*",
     "babel-plugin-add-module-exports": "*",
+    "babel-plugin-transform-decorators-legacy": "*",
     "babel-plugin-transform-runtime": "*",
     "babel-preset-env": "*",
     "babel-preset-react": "*",
     "babel-preset-stage-0": "*",
     "cross-env": "*",
-    "extract-text-webpack-plugin": "*",
     "webpack": "*",
     "webpack-cli": "*"
   }
