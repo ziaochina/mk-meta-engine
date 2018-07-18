@@ -2653,6 +2653,8 @@ var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCh
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
+var _class, _temp, _initialiseProps;
+
 exports.default = creator;
 
 var _react = __webpack_require__(/*! react */ "react");
@@ -2685,7 +2687,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var appInstances = {};
 
-var action = function action(option) {
+var action = (_temp = _class = function action(option) {
 	(0, _classCallCheck3.default)(this, action);
 
 	_initialiseProps.call(this);
@@ -2695,9 +2697,7 @@ var action = function action(option) {
 	this.cache = {};
 
 	common.setMeta(option.appInfo);
-};
-
-var _initialiseProps = function _initialiseProps() {
+}, _initialiseProps = function _initialiseProps() {
 	var _this = this;
 
 	this.config = function (_ref) {
@@ -2823,7 +2823,7 @@ var _initialiseProps = function _initialiseProps() {
 		}
 
 		/*
-  	Object.keys(this.metaHandlers).forEach(k => {
+  		Object.keys(this.metaHandlers).forEach(k => {
   	values.push((...args) => this.metaHandlers[k](...args, { currentPath: path, rowIndex, vars, lastIndex: vars && vars[vars.length - 1] }))
   })
   */
@@ -3109,8 +3109,7 @@ var _initialiseProps = function _initialiseProps() {
 	this.momentToString = _mkUtils2.default.moment.momentToString;
 	this.fromJS = _immutable.fromJS;
 	this.context = _context2.default;
-};
-
+}, _temp);
 function creator(option) {
 	return new action(option);
 }
@@ -3651,6 +3650,78 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "./src/defaultComponent.js":
+/*!*********************************!*\
+  !*** ./src/defaultComponent.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = undefined;
+
+var _extends2 = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "./node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "./node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "./node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "./node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "./node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _dec, _class;
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _wrapper = __webpack_require__(/*! ./wrapper */ "./src/wrapper.js");
+
+var _wrapper2 = _interopRequireDefault(_wrapper);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var C = (_dec = (0, _wrapper2.default)(), _dec(_class = function (_Component) {
+	(0, _inherits3.default)(C, _Component);
+
+	function C() {
+		(0, _classCallCheck3.default)(this, C);
+		return (0, _possibleConstructorReturn3.default)(this, (C.__proto__ || (0, _getPrototypeOf2.default)(C)).apply(this, arguments));
+	}
+
+	(0, _createClass3.default)(C, [{
+		key: 'render',
+		value: function render() {
+			return this.props.monkeyKing((0, _extends3.default)({}, this.props, { path: 'root' }));
+		}
+	}]);
+	return C;
+}(_react.Component)) || _class);
+exports.default = C;
+module.exports = exports['default'];
+
+/***/ }),
+
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -3691,6 +3762,10 @@ var _templateFactory = __webpack_require__(/*! ./templateFactory */ "./src/templ
 
 var _templateFactory2 = _interopRequireDefault(_templateFactory);
 
+var _defaultComponent = __webpack_require__(/*! ./defaultComponent */ "./src/defaultComponent.js");
+
+var _defaultComponent2 = _interopRequireDefault(_defaultComponent);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //import tryCatchError from './reactTryCatchBatchingStrategy'
@@ -3703,6 +3778,7 @@ exports.default = {
 	wrapper: _wrapper2.default,
 	componentFactory: _componentFactory2.default,
 	templateFactory: _templateFactory2.default,
+	defaultComponent: _defaultComponent2.default,
 	AppLoader: _mkAppLoader.AppLoader
 };
 module.exports = exports['default'];
@@ -3863,7 +3939,7 @@ function metaToComponent(meta, props, data) {
 
             /*
              var metaProps = parseMetaProps(meta, props, data)
-             var metaPropsKeys = Object.keys(metaProps)
+              var metaPropsKeys = Object.keys(metaProps)
             for (var i = 0; i < metaPropsKeys.length; i++) {
                 allProps[metaPropsKeys[i]] = metaProps[metaPropsKeys[i]]
             }*/
@@ -3961,6 +4037,8 @@ var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCh
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
+var _class, _temp, _initialiseProps;
+
 exports.default = creator;
 
 var _immutable = __webpack_require__(/*! immutable */ "immutable");
@@ -3979,15 +4057,13 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var reducer = function reducer(option) {
+var reducer = (_temp = _class = function reducer(option) {
 	(0, _classCallCheck3.default)(this, reducer);
 
 	_initialiseProps.call(this);
 
 	this.appInfo = option.appInfo;
-};
-
-var _initialiseProps = function _initialiseProps() {
+}, _initialiseProps = function _initialiseProps() {
 	var _this = this;
 
 	this.init = function (state, option) {
@@ -4029,8 +4105,7 @@ var _initialiseProps = function _initialiseProps() {
 	this.sf = common.setField;
 	this.sfs = common.setFields;
 	this.context = _context2.default;
-};
-
+}, _temp);
 function creator(option) {
 	return new reducer(option);
 }
